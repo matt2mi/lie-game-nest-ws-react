@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script>
+        const socket = io.connect('http://localhost:3001');
+
+        socket.on('connected', function(msg) {
+            console.log('Connected', msg);
+            socket.emit('yop', { test: 'test' });
+        });
+
+        socket.emit('subscribeToApp', 'matt');
+    </script>
+</head>
+<body>BODY</body>
+</html>
