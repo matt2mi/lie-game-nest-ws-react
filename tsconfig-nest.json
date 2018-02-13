@@ -10,15 +10,14 @@
     "target": "es6",
     "sourceMap": true,
     "allowJs": true,
-    "outDir": "./dist",
-    "jsx": "react"
+    "outDir": "./dist"
   },
   "include": [
-    "src/public/*",
-    "src/react/*"
+    "src/**/*"
   ],
   "exclude": [
-    "src/**/*",
+    "src/public/*",
+    "src/react/*",
     "node_modules",
     "**/*.spec.ts"
   ]

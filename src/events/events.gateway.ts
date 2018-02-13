@@ -7,7 +7,7 @@ import {
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 
-@WebSocketGateway({ port: 3001 })
+@WebSocketGateway({ port: 3002 })
 export class EventsGateway {
     @WebSocketServer() server;
 
