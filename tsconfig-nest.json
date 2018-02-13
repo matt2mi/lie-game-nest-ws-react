@@ -10,14 +10,13 @@
     "target": "es6",
     "sourceMap": true,
     "allowJs": true,
-    "outDir": "./dist"
+    "outDir": "build"
   },
   "include": [
-    "src/**/*"
+    "server/**/*"
   ],
   "exclude": [
-    "src/public/*",
-    "src/react/*",
+    "src/*",
     "node_modules",
     "**/*.spec.ts"
   ]

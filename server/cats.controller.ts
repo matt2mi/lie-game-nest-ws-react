@@ -1,4 +1,4 @@
-import {Get, Controller, Req, Res, Post, Body, HttpStatus} from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 
 export class CreateCatDto {
     readonly name: string;
@@ -10,6 +10,7 @@ export class CatsController {
 
     @Post('create')
     create(@Res() response, @Body() createCatDto: CreateCatDto) {
+        console.log('welcome ', createCatDto.name, '!');
         this.cats.push(createCatDto);
         return response.status(HttpStatus.CREATED).json(this.cats);
     }

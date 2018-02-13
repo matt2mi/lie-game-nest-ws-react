@@ -4,10 +4,13 @@
   "description": "Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
-    "start:watch": "nodemon",
-    "prestart:prod": "tsc -p tsconfig-nest.json",
-    "start:prod": "node dist/main.js"
+    "start": "npm run build && node index-prod.js",
+    "start:react": "react-scripts-ts start",
+    "start:server": "nodemon index-dev.js",
+    "start:server-prod": "npm run build:server-prod && node index-prod.js",
+    "build": "npm run build:react && npm run build:server-prod",
+    "build:react": "react-scripts-ts build",
+    "build:server-prod": "tsc -p tsconfig-nest.json"
   },
   "dependencies": {
     "@nestjs/common": "^4.5.9",
@@ -17,16 +20,18 @@
     "@nestjs/websockets": "^4.5.8",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/socket.io": "^1.4.31",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "redis": "^2.7.1",
     "reflect-metadata": "^0.1.12",
-    "rxjs": "^5.5.6",
-    "typescript": "^2.6.2"
+    "rxjs": "^5.5.6"
   },
   "devDependencies": {
     "@types/node": "^9.3.0",
     "nodemon": "^1.14.1",
-    "ts-node": "^4.1.0"
+    "react-scripts-ts": "2.8.0",
+    "ts-node": "^4.1.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.1"
   }
 }

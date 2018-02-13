@@ -1,4 +1,4 @@
-import {Get, Controller, Res} from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import * as path from "path";
 
 @Controller()
