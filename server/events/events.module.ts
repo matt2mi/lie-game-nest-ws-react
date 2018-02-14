@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { EventsGateway } from './events.gateway';
-import { PlayersService } from '../services/players.service';
+import { PlayersModule } from '../players/players.module';
 
 @Module({
-    components: [PlayersService, EventsGateway],
+    modules: [PlayersModule],
+    components: [EventsGateway],
 })
-export class EventsModule {}
+export class EventsModule {
+}

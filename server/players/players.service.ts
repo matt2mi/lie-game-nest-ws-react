@@ -7,54 +7,41 @@ export interface Player {
 
 @Component()
 export class PlayersService {
-    private readonly _maxPlayers = 2;
-
-    constructor() {
-        this.initAttributes();
-    }
-
+    private readonly _maxPlayers = 3;
     get maxPlayers(): number {
         return this._maxPlayers;
     }
 
     private _players: Player[];
-
     get players(): Player[] {
         return this._players;
     }
-
     set players(players: Player[]) {
         this._players = players;
-        console.log('here', this._players);
     }
-
-    private _playersMap: Map<any, Player>; // (socketClient, Player)
 
     // private readonly liesMap: Map<string, string>; // ('mito', 'pseudo')
     // private readonly answersMap: Map<string, string[]>; // (lieValue: 'mito', ['pseudo'])
     // private readonly restartMap: Map<any, string>;
     // private readonly scores: { pseudo: string, scoreValue: number }[]; // [{pseudo: 'pseudo', scoreValue: 500}]
 
-    get playersMap(): Map<any, Player> {
-        return this._playersMap;
+    constructor() {
+        this.initAttributes();
     }
 
     initAttributes() {
         this._players = [];
-        this._playersMap = new Map();
     }
 
-    addPlayer(pseudo: string, socketClient: any) {
+    addPlayer(pseudo: string) {
         this._players.push({id: this._players.length, pseudo: pseudo});
-        console.log('addPlayer', this._players);
-        this.playersMap.set(socketClient, this._players[this._players.length]);
     }
 
-    deletePlayer(deleteId: number, socketClient: any) {
-        if (this.players.length > 0) {
-            this.players.splice(deleteId, 1);
-            this.players.map((player, id) => ({...player, id}));
-            this.playersMap.delete(socketClient);
+    deletePlayer(pseudo: string) {
+        if (this._players.length > 0) {
+            const id = this.players.findIndex(player => player.pseudo === pseudo);
+            this._players.splice(id, 1);
+            this._players.map((player, id) => ({...player, id}));
         }
     }
 }

@@ -1,7 +1,7 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
-import { PlayersService } from '../services/players.service';
+import { PlayersService } from '../players/players.service';
 
 @WebSocketGateway({port: 3001})
 export class EventsGateway {
@@ -10,33 +10,26 @@ export class EventsGateway {
     constructor(private readonly playersService: PlayersService) {
     }
 
-    @SubscribeMessage('disconnect')
-    disconnect(socketClient): void { // WsResponse<Player[]> {
-        if (this.playersService.playersMap.size > 0 &&
-            this.playersService.playersMap.get(socketClient) &&
-            this.playersService.playersMap.get(socketClient).id !== -1) {
+    playersMap = new Map();
 
-            console.log('disconnect');
-            this.playersService.deletePlayer(this.playersService.playersMap.get(socketClient).id, socketClient);
+    @SubscribeMessage('disconnect')
+    disconnect(socketClient): void {
+        const pseudo = this.playersMap.get(socketClient);
+        if (pseudo) {
+            console.log(pseudo, 'disconnected');
+            this.playersMap.set(socketClient, pseudo);
+            this.playersService.deletePlayer(pseudo);
             this.webSocketServer.emit('updatePlayers', this.playersService.players);
-            // return {
-            //     event: 'updatePlayers',
-            //     data: this.playersService.players
-            // };
         }
     }
 
     @SubscribeMessage('subscribeToApp')
     onSubscribe(socketClient, pseudo): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
-            console.log('subscribeToApp', pseudo);
-            this.playersService.addPlayer(pseudo, socketClient);
-            console.log('updatePlayers', this.playersService.players);
+            console.log(pseudo, 'connected');
+            this.playersService.addPlayer(pseudo);
+            this.playersMap.set(socketClient, pseudo);
             this.webSocketServer.emit('updatePlayers', this.playersService.players);
-            // return {
-            //     event: 'updatePlayers',
-            //     data: this.playersService.players
-            // };
 
             if (this.playersService.players.length === this.playersService.maxPlayers) {
                 this.webSocketServer.emit('players-list-full', this.playersService.players);
