@@ -5,7 +5,7 @@ import * as express from 'express';
 async function bootstrap() {
     const app = await NestFactory.create(ApplicationModule);
 
-    app.use("/", express.static(__dirname + '/'));
+    app.use('/', express.static('/Users/mathieudeumie/projets/github/nest-api-ws/build/'));
 
     await app.listen(3000);
     console.log('[Nest] listening on port 3000');

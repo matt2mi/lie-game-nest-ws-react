@@ -1,0 +1,21 @@
+.App {
+    text-align: center;
+}
+
+.base-div-content {
+    margin-top: 60px;
+}
+
+.navbar a {
+    color: white !important;
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar,
+.navbar-default {
+    background-color: #17A2B8;
+}

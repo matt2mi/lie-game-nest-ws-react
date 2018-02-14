@@ -14,7 +14,7 @@
     "jsx": "react"
   },
   "include": [
-    "src/*.tsx"
+    "src/**/*.tsx"
   ],
   "exclude": [
     "server/**/*",
