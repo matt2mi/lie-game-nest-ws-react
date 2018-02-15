@@ -1,5 +1,6 @@
 import { Controller, Get, Res } from '@nestjs/common';
-import { Player, PlayersService } from './players.service';
+import { PlayersService } from './players.service';
+import Questions from '../questions/questions';
 
 @Controller()
 export class PlayersController {
@@ -8,13 +9,26 @@ export class PlayersController {
 
     @Get('api/players')
     async players(@Res() res) {
-        const players: Player[] = this.playersService.players;
-        res.json(players);
+        res.json(this.playersService.players);
     }
 
     @Get('api/nbMaxPlayers')
     async nbMaxPlayers(@Res() res) {
-        const maxPlayers = this.playersService.maxPlayers;
-        res.json(maxPlayers);
+        res.json(this.playersService.maxPlayers);
     }
+
+    @Get('api/question')
+    async question(@Res() res) {
+        res.json(Questions[0]);
+    }
+
+    // @Get('api/results')
+    // async results(@Res() res) {
+    //     res.json(this.playersService.calculateResults());
+    // }
+    //
+    // @Get('api/scores')
+    // async scores(@Res() res) {
+    //     res.json(this.playersService.calculateScores());
+    // }
 }

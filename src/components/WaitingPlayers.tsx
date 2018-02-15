@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
+import { Promise } from 'es6-promise';
 import Socket = SocketIOClient.Socket;
 
 interface Player {
@@ -33,38 +34,34 @@ class WaitingPlayers extends React.Component<Props, State> {
     }
 
     onUpdatePlayers(players: Player[]): void {
-        console.log('players', players);
         this.setState({players});
     }
 
     enoughPlayers(players: Player[]): void {
+        console.log('players', players);
         this.setState({players, goToPlay: true});
     }
 
-    componentWillMount() {
-        fetch('/api/players')
+    componentDidMount() {
+        const playersPromise = fetch('/api/players')
             .then(result => {
                 return result.json();
-            })
-            .then((players: Player[]) => {
-                const truePlayers: Player[] = players.map((res: Player) => {
-                    return {id: res.id, pseudo: res.pseudo};
-                });
-                this.onUpdatePlayers(truePlayers);
-            })
-            .catch(e => {
-                console.error(e);
             });
 
-        fetch('/api/nbMaxPlayers')
+        const maxPlayersPromise = fetch('/api/nbMaxPlayers')
             .then(result => {
                 return result.json();
-            })
-            .then((nbMaxPlayers: number) => {
-                this.setState({nbMaxPlayers});
-            })
-            .catch(e => {
-                console.error(e);
+            });
+
+        Promise.all([playersPromise, maxPlayersPromise])
+            .then((results: any[]) => {
+                const truePlayers: Player[] = results[0].map((res: Player) => {
+                    return {id: res.id, pseudo: res.pseudo};
+                });
+                this.setState({players: truePlayers, nbMaxPlayers: results[1]});
+                if (this.state.nbMaxPlayers === this.state.players.length) {
+                    this.setState({goToPlay: true});
+                }
             });
     }
 

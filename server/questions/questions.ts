@@ -1,6 +1,12 @@
-export const Questions = [
+export type Question = {
+    text: string;
+    answers: string[];
+    lies: string[];
+}
+
+export default [
     {
-        text: 'El colacho est un festival espagnol où les gens s\'habille en diables et sautent au dessus de ...',
+        text: 'El colacho est un festival espagnol où les gens s\'habillent en diables et sautent au dessus de ...',
         answers: ['bébés', 'bebes', 'bébé', 'bebe'],
         lies: ['voitures', 'piscines']
     }, {

@@ -10,15 +10,12 @@ export class EventsGateway {
     constructor(private readonly playersService: PlayersService) {
     }
 
-    playersMap = new Map();
-
     @SubscribeMessage('disconnect')
     disconnect(socketClient): void {
-        const pseudo = this.playersMap.get(socketClient);
+        const pseudo = this.playersService.playersMap.get(socketClient);
         if (pseudo) {
-            console.log(pseudo, 'disconnected');
-            this.playersMap.set(socketClient, pseudo);
-            this.playersService.deletePlayer(pseudo);
+            console.log('disconnect', pseudo);
+            this.playersService.deletePlayer(socketClient, pseudo);
             this.webSocketServer.emit('updatePlayers', this.playersService.players);
         }
     }
@@ -26,9 +23,8 @@ export class EventsGateway {
     @SubscribeMessage('subscribeToApp')
     onSubscribe(socketClient, pseudo): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
-            console.log(pseudo, 'connected');
-            this.playersService.addPlayer(pseudo);
-            this.playersMap.set(socketClient, pseudo);
+            this.playersService.addPlayer(socketClient, pseudo);
+            console.log(this.playersService.playersMap.get(socketClient), 'connected');
             this.webSocketServer.emit('updatePlayers', this.playersService.players);
 
             if (this.playersService.players.length === this.playersService.maxPlayers) {
