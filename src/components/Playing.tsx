@@ -16,6 +16,7 @@ interface Question {
 }
 
 interface Props {
+    readonly pseudo: string;
 }
 
 interface State {
@@ -49,7 +50,7 @@ export default class Playing extends React.Component<Props, State> {
             displayLies: false,
             goToResults: false,
             isGoodAnswer: false,
-            currentPseudo: '' // TODO PSEUDO
+            currentPseudo: this.props.pseudo // TODO PSEUDO
         };
 
         const url = window.location.href;
@@ -66,7 +67,7 @@ export default class Playing extends React.Component<Props, State> {
             displayLies: false,
             goToResults: false,
             isGoodAnswer: false,
-            currentPseudo: '' // TODO PSEUDO
+            currentPseudo: this.props.pseudo // TODO PSEUDO
         });
     }
 
@@ -94,7 +95,7 @@ export default class Playing extends React.Component<Props, State> {
         this.socket.on('loadLies', (lies: Lie[]) => this.loadLies(lies));
         this.socket.emit('lieAnswered', {
             lieValue: this.state.lieAnswered,
-            pseudo: '' // TODO PSEUDO
+            pseudo: this.props.pseudo // TODO PSEUDO
         });
     }
 
@@ -105,7 +106,13 @@ export default class Playing extends React.Component<Props, State> {
         this.socket.on('goToResults', () => {
             this.setState({goToResults: true});
         });
-        this.socket.emit('lieChoosen', {lie: lie, pseudo: ''}); // TODO PSEUDO
+        this.socket.emit('lieChoosen', {
+            lie: {
+                value: lie.lieValue,
+                pseudo: lie.pseudo
+            },
+            pseudo: this.props.pseudo
+        }); // TODO PSEUDO
     }
 
     componentWillMount() {
@@ -154,8 +161,12 @@ export default class Playing extends React.Component<Props, State> {
                                 </form>
                             </div>
                             : null}
+
                         {this.state.displayLies ?
                             <div>
+                                <div className="col">
+                                    Choisis la bonne réponse :
+                                </div>
                                 {this.state.lies.map(lie => {
                                     if (lie.pseudo !== this.state.currentPseudo) {
                                         return (<div className="col" key={lie.pseudo}>

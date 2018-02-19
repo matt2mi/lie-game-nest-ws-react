@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Promise } from 'es6-promise';
+import { connect } from 'react-redux';
 import Socket = SocketIOClient.Socket;
 
 interface Player {
@@ -10,6 +11,7 @@ interface Player {
 }
 
 interface Props {
+    readonly pseudo: string;
 }
 
 interface State {
@@ -71,7 +73,7 @@ class WaitingPlayers extends React.Component<Props, State> {
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row">Waiting other players...</div>
+                    <div className="row">{this.props.pseudo + ' '} is waiting other players...</div>
                     <div className="row">
                         {this.state.players.length + '/' + this.state.nbMaxPlayers} players
                     </div>
@@ -84,4 +86,8 @@ class WaitingPlayers extends React.Component<Props, State> {
     }
 }
 
-export default WaitingPlayers;
+const mapStateToProps = state => ({
+    pseudo: state.pseudo
+});
+
+export default connect(mapStateToProps)(WaitingPlayers);

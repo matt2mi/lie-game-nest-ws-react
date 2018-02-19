@@ -1,5 +1,5 @@
 import Login from '../components/Login';
-import * as actions from '../actions';
+import { PseudoAction, setPseudo } from '../actions';
 import { StoreState } from '../types';
 import { connect, Dispatch } from 'react-redux';
 
@@ -7,10 +7,10 @@ export function mapStateToProps({pseudo = ''}: StoreState) {
     return {pseudo};
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.EnthusiasmAction>) {
+export function mapDispatchToProps(dispatch: Dispatch<PseudoAction>) {
     return {
         setPseudo: (pseudo: string) => {
-            dispatch(actions.setPseudo(pseudo));
+            dispatch(setPseudo(pseudo));
         }
     };
 }

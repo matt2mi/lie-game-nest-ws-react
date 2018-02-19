@@ -12,18 +12,16 @@ import { Provider } from 'react-redux';
 const store = createStore<StoreState>(
     reducer,
     {
-        enthusiasmLevel: 1,
-        languageName: 'TypeScript',
-        pseudo: 'pseudo'
+        pseudo: ''
     },
     // window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
 ReactDOM.render(
-    <Provider store={store}>
-        <BrowserRouter>
+    <BrowserRouter>
+        <Provider store={store}>
             <App/>
-        </BrowserRouter>
-    </Provider>,
+        </Provider>
+    </BrowserRouter>,
     document.getElementById('root') as HTMLElement
 );

@@ -54,9 +54,8 @@ export default class Results extends React.Component<Props, State> {
 
     componentWillMount() {
         fetch('/api/results')
-            .then(results => {
-                return results.json();
-            })
+            .then(this.handleErrors)
+            .then(results => results.json())
             .then((results: Result[]) => {
                 console.log('results', results);
                 const trueResults: Result[] = results.map((res: Result, id: number): Result => {
@@ -71,13 +70,11 @@ export default class Results extends React.Component<Props, State> {
             })
             .catch(e => {
                 console.error(e);
-                return null;
             });
 
         fetch('/api/scores')
-            .then(scores => {
-                return scores.json();
-            })
+            .then(this.handleErrors)
+            .then(scores => scores.json())
             .then((scores: Score[]) => {
                 console.log('scores', scores);
                 const trueScores: Score[] = scores.map((score: Score, id: number): Score => {
@@ -91,8 +88,15 @@ export default class Results extends React.Component<Props, State> {
             })
             .catch(e => {
                 console.error(e);
-                return null;
             });
+    }
+
+    handleErrors(response) {
+        // TODO : accessible partout
+        if (!response.ok) {
+            throw Error(response.statusText);
+        }
+        return response;
     }
 
     newGame() {

@@ -1,10 +1,11 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { PlayersService } from './players.service';
-import Questions from '../questions/questions';
+import { QuestionsService } from '../questions/questions.service';
 
 @Controller()
 export class PlayersController {
-    constructor(private readonly playersService: PlayersService) {
+    constructor(private readonly playersService: PlayersService,
+                private readonly questionsService: QuestionsService) {
     }
 
     @Get('api/players')
@@ -19,16 +20,16 @@ export class PlayersController {
 
     @Get('api/question')
     async question(@Res() res) {
-        res.json(Questions[0]);
+        res.json(this.questionsService.getQuestion(0));
     }
 
-    // @Get('api/results')
-    // async results(@Res() res) {
-    //     res.json(this.playersService.calculateResults());
-    // }
-    //
-    // @Get('api/scores')
-    // async scores(@Res() res) {
-    //     res.json(this.playersService.calculateScores());
-    // }
+    @Get('api/results')
+    async results(@Res() res) {
+        res.json(this.playersService.calculateResults());
+    }
+
+    @Get('api/scores')
+    async scores(@Res() res) {
+        res.json(this.playersService.calculateScores());
+    }
 }

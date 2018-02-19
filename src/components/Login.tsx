@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import * as io from 'socket.io-client';
-import MyButton from './MyLinkButton';
-import { History } from 'history';
+import { Redirect } from 'react-router';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -13,6 +12,7 @@ interface Props {
 interface State {
     readonly pseudo: string;
     readonly connected: boolean;
+    readonly goNext: boolean;
 }
 
 export default class Login extends React.Component<Props, State> {
@@ -24,6 +24,7 @@ export default class Login extends React.Component<Props, State> {
         this.state = {
             pseudo: '',
             connected: false,
+            goNext: false
         };
 
         const url = window.location.href;
@@ -45,7 +46,7 @@ export default class Login extends React.Component<Props, State> {
         });
     }
 
-    login(event: SyntheticEvent<HTMLButtonElement>, history: History) {
+    login(event: SyntheticEvent<HTMLButtonElement>) {
         console.log('pseudo', this.state.pseudo);
         event.preventDefault();
         this.subscribeToApp(
@@ -55,7 +56,7 @@ export default class Login extends React.Component<Props, State> {
                     console.error(error);
                 } else {
                     this.props.setPseudo(this.state.pseudo);
-                    history.push('/waiting');
+                    this.setState({goNext: true});
                 }
             },
             this.state.pseudo
@@ -63,6 +64,9 @@ export default class Login extends React.Component<Props, State> {
     }
 
     render() {
+        if (this.state.goNext) {
+            return (<Redirect to="/waiting"/>);
+        }
         return (
             <div className="base-div-content">
                 <div className="row mt-3 justify-content-center">
@@ -76,12 +80,9 @@ export default class Login extends React.Component<Props, State> {
                                     <label>Pseudo</label>
                                     <input type="text" className="form-control" onChange={this.changeValue}/>
                                 </div>
-                                <MyButton
-                                    cb={this.login}
-                                    type={'submit'}
-                                >
+                                <button onClick={this.login}>
                                     Login
-                                </MyButton>
+                                </button>
                             </form>
                         </div>
                     </div>
