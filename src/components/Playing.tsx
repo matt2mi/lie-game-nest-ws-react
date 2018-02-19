@@ -50,7 +50,7 @@ export default class Playing extends React.Component<Props, State> {
             displayLies: false,
             goToResults: false,
             isGoodAnswer: false,
-            currentPseudo: this.props.pseudo // TODO PSEUDO
+            currentPseudo: this.props.pseudo
         };
 
         const url = window.location.href;
@@ -67,7 +67,7 @@ export default class Playing extends React.Component<Props, State> {
             displayLies: false,
             goToResults: false,
             isGoodAnswer: false,
-            currentPseudo: this.props.pseudo // TODO PSEUDO
+            currentPseudo: this.props.pseudo
         });
     }
 
@@ -86,7 +86,6 @@ export default class Playing extends React.Component<Props, State> {
     }
 
     loadLies(lies: Lie[]) {
-        console.log('loadlies', lies);
         this.setState({lies, displayLies: true});
     }
 
@@ -95,14 +94,13 @@ export default class Playing extends React.Component<Props, State> {
         this.socket.on('loadLies', (lies: Lie[]) => this.loadLies(lies));
         this.socket.emit('lieAnswered', {
             lieValue: this.state.lieAnswered,
-            pseudo: this.props.pseudo // TODO PSEUDO
+            pseudo: this.props.pseudo
         });
     }
 
     chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
         this.setState({displayLies: false});
         e.preventDefault();
-        console.log('lie', lie);
         this.socket.on('goToResults', () => {
             this.setState({goToResults: true});
         });
@@ -112,7 +110,7 @@ export default class Playing extends React.Component<Props, State> {
                 pseudo: lie.pseudo
             },
             pseudo: this.props.pseudo
-        }); // TODO PSEUDO
+        });
     }
 
     componentWillMount() {

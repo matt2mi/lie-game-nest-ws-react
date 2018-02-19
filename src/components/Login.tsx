@@ -12,7 +12,6 @@ interface Props {
 interface State {
     readonly pseudo: string;
     readonly connected: boolean;
-    readonly goNext: boolean;
 }
 
 export default class Login extends React.Component<Props, State> {
@@ -23,8 +22,7 @@ export default class Login extends React.Component<Props, State> {
 
         this.state = {
             pseudo: '',
-            connected: false,
-            goNext: false
+            connected: false
         };
 
         const url = window.location.href;
@@ -36,7 +34,9 @@ export default class Login extends React.Component<Props, State> {
     }
 
     subscribeToApp(cb: (err: string) => void, pseudo: string): void {
-        this.socket.on('updatePlayers', () => cb(''));
+        this.socket.on('updatePlayers', () => {
+            if (!this.state.connected) cb('');
+        });
         this.socket.emit('subscribeToApp', pseudo);
     }
 
@@ -47,16 +47,14 @@ export default class Login extends React.Component<Props, State> {
     }
 
     login(event: SyntheticEvent<HTMLButtonElement>) {
-        console.log('pseudo', this.state.pseudo);
         event.preventDefault();
         this.subscribeToApp(
             (error: string) => {
-                console.log('updatePlayers - login');
                 if (error.length > 0) {
                     console.error(error);
                 } else {
                     this.props.setPseudo(this.state.pseudo);
-                    this.setState({goNext: true});
+                    this.setState({connected: true});
                 }
             },
             this.state.pseudo
@@ -64,7 +62,7 @@ export default class Login extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.state.goNext) {
+        if (this.state.connected) {
             return (<Redirect to="/waiting"/>);
         }
         return (

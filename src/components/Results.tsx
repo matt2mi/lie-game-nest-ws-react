@@ -57,7 +57,6 @@ export default class Results extends React.Component<Props, State> {
             .then(this.handleErrors)
             .then(results => results.json())
             .then((results: Result[]) => {
-                console.log('results', results);
                 const trueResults: Result[] = results.map((res: Result, id: number): Result => {
                     return {
                         id,
@@ -100,7 +99,6 @@ export default class Results extends React.Component<Props, State> {
     }
 
     newGame() {
-        console.log('restart');
         this.setState({goRestart: true});
     }
 
@@ -145,31 +143,21 @@ export default class Results extends React.Component<Props, State> {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="card">
-                        <div className="card-header">
-                            Scores !
+                    Scores !
+                </div>
+                <div className="row">
+                    {this.state.scores.map(score => (
+                        <div className="col-2" key={score.id}>
+                            {score.pseudo}
                         </div>
-                        <div className="card-block p-3">
-                            <div className="row">
-                                {this.state.scores.map(score => (
-                                    <div>
-                                        <div className="col" key={score.id}>
-                                            {score.pseudo}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="row">
-                                {this.state.scores.map(score => (
-                                    <div>
-                                        <div className="col" key={score.id}>
-                                            {score.value}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                    ))}
+                </div>
+                <div className="row">
+                    {this.state.scores.map(score => (
+                        <div className="col-2" key={score.id}>
+                            {score.value}
                         </div>
-                    </div>
+                    ))}
                 </div>
                 <button type="button" className="btn btn-primary" onClick={() => this.restart()}>
                     Envoyer
