@@ -1,28 +1,18 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
+import { Result, Score } from '../types';
 import Socket = SocketIOClient.Socket;
 
-interface Result {
-    id: number;
-    lieValue: string;
-    liarPseudo: string;
-    playerPseudo: string;
-}
-
-interface Score {
-    id: number;
-    pseudo: string;
-    value: number;
-}
-
 interface Props {
+    readonly pseudo: string;
+    readonly results: Result[];
+    readonly scores: Score[];
 }
 
 interface State {
-    readonly results: Result[];
-    readonly scores: Score[];
-    readonly goRestart: boolean;
+    readonly goNext: boolean;
+    decounter: number;
 }
 
 export default class Results extends React.Component<Props, State> {
@@ -38,76 +28,35 @@ export default class Results extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.restart = this.restart.bind(this);
-        this.newGame = this.newGame.bind(this);
+        this.nextQuestion = this.nextQuestion.bind(this);
+        this.startTimer = this.startTimer.bind(this);
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
-        this.socket.on('newGame', this.newGame);
+        this.socket.on('nextQuestion', this.nextQuestion);
 
         this.state = {
-            results: [],
-            scores: [],
-            goRestart: false
+            goNext: false,
+            decounter: 10
         };
+        this.startTimer();
     }
 
-    componentWillMount() {
-        fetch('/api/results')
-            .then(this.handleErrors)
-            .then(results => results.json())
-            .then((results: Result[]) => {
-                const trueResults: Result[] = results.map((res: Result, id: number): Result => {
-                    return {
-                        id,
-                        playerPseudo: res.playerPseudo,
-                        lieValue: res.lieValue,
-                        liarPseudo: res.liarPseudo
-                    };
-                });
-                return this.setState({results: trueResults});
-            })
-            .catch(e => {
-                console.error(e);
-            });
-
-        fetch('/api/scores')
-            .then(this.handleErrors)
-            .then(scores => scores.json())
-            .then((scores: Score[]) => {
-                console.log('scores', scores);
-                const trueScores: Score[] = scores.map((score: Score, id: number): Score => {
-                    return {
-                        id,
-                        pseudo: score.pseudo,
-                        value: score.value
-                    };
-                });
-                return this.setState({scores: trueScores});
-            })
-            .catch(e => {
-                console.error(e);
-            });
-    }
-
-    handleErrors(response) {
-        // TODO : accessible partout
-        if (!response.ok) {
-            throw Error(response.statusText);
+    startTimer() {
+        if (this.state.decounter >= 0) {
+            setTimeout(() => {
+                this.setState({decounter: this.state.decounter - 1});
+                this.startTimer();
+            }, 1000);
         }
-        return response;
     }
 
-    newGame() {
-        this.setState({goRestart: true});
-    }
-
-    restart() {
-        this.socket.emit('restart', 'pseudo'); // TODO STORE
+    nextQuestion() {
+        this.setState({goNext: true});
     }
 
     render() {
-        if (this.state.goRestart) {
+        if (this.state.goNext) {
             return (<Redirect to="/playing"/>);
         }
         return (
@@ -119,7 +68,7 @@ export default class Results extends React.Component<Props, State> {
                         </div>
                         <div className="card-block p-3 ">
 
-                            {this.state.results.map(res => (
+                            {this.props.results.map(res => (
                                 <div
                                     className="col m-1"
                                     style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
@@ -146,22 +95,22 @@ export default class Results extends React.Component<Props, State> {
                     Scores !
                 </div>
                 <div className="row">
-                    {this.state.scores.map(score => (
+                    {this.props.scores.map(score => (
                         <div className="col-2" key={score.id}>
                             {score.pseudo}
                         </div>
                     ))}
                 </div>
                 <div className="row">
-                    {this.state.scores.map(score => (
+                    {this.props.scores.map(score => (
                         <div className="col-2" key={score.id}>
                             {score.value}
                         </div>
                     ))}
                 </div>
-                <button type="button" className="btn btn-primary" onClick={() => this.restart()}>
-                    Envoyer
-                </button>
+                <div className="row">
+                    {this.state.decounter}
+                </div>
             </div>
         );
     }

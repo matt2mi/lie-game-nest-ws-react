@@ -3,7 +3,7 @@ import { Player } from '../types';
 
 @Component()
 export class PlayersService {
-    private readonly _maxPlayers = 3;
+    private readonly _maxPlayers = 2;
     get maxPlayers(): number {
         return this._maxPlayers;
     }
@@ -12,6 +12,7 @@ export class PlayersService {
     get players(): Player[] {
         return this._players;
     }
+
     set players(players: Player[]) {
         this._players = players;
     }
@@ -20,9 +21,7 @@ export class PlayersService {
     private playersMap: Map<any, string> = new Map(); // set(socket, pseudo)
     private liesMap: Map<string, string> = new Map(); // ('mito', 'pseudo')
     private answersMap: Map<string, string[]> = new Map(); // (lieValue: 'mito', ['pseudo'])
-
-    // private readonly restartMap: Map<any, string>;
-    // private readonly scores: { pseudo: string, scoreValue: number }[]; // [{pseudo: 'pseudo', scoreValue: 500}]
+    private scoresMap: Map<string, number> = new Map(); // pseudo, score
 
     constructor() {
         this.initAttributes();
@@ -96,33 +95,38 @@ export class PlayersService {
     }
 
     calculateScores() {
-        const scoresMap: Map<string, number> = new Map();
-        this.players.forEach(player => scoresMap.set(player.pseudo, 0));
+        if (this.scoresMap.size < 1) this.players.forEach(player => this.scoresMap.set(player.pseudo, 0));
 
         for (let [lieValue, pseudos] of Array.from(this.answersMap)) {
             const liarPseudo = this.liesMap.get(lieValue);
             if (liarPseudo === 'truth') {
                 pseudos.forEach((pseudo: string) => {
-                    const score = scoresMap.get(pseudo);
+                    const score = this.scoresMap.get(pseudo);
                     if (score !== undefined) {
-                        scoresMap.set(pseudo, score + 500);
+                        this.scoresMap.set(pseudo, score + 500);
                     }
                 });
             } else if (liarPseudo === 'gameLie') {
                 pseudos.forEach((pseudo: string) => {
-                    const score = scoresMap.get(pseudo);
+                    const score = this.scoresMap.get(pseudo);
                     if (score !== undefined) {
-                        scoresMap.set(pseudo, score - 400);
+                        this.scoresMap.set(pseudo, score - 400);
                     }
                 });
             } else if (liarPseudo) {
-                const score = scoresMap.get(liarPseudo);
+                const score = this.scoresMap.get(liarPseudo);
                 if (score !== undefined) {
-                    scoresMap.set(liarPseudo, score + 200 * pseudos.length);
+                    this.scoresMap.set(liarPseudo, score + 200 * pseudos.length);
                 }
             }
         }
 
-        return PlayersService.mapToArray(scoresMap, 'pseudo', 'value');
+        return PlayersService.mapToArray(this.scoresMap, 'pseudo', 'value');
+    }
+
+    endOfRound() {
+        this.playersMap = new Map();
+        this.liesMap = new Map();
+        this.answersMap = new Map();
     }
 }

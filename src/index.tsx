@@ -12,7 +12,9 @@ import { Provider } from 'react-redux';
 const store = createStore<StoreState>(
     reducer,
     {
-        pseudo: ''
+        pseudo: '',
+        results: [],
+        scores: []
     },
     // window.__REDUX_DEVTOOLS_EXTENSION__()
 );

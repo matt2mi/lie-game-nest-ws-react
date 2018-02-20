@@ -20,16 +20,7 @@ export class PlayersController {
 
     @Get('api/question')
     async question(@Res() res) {
+        // TODO faire une suite de question
         res.json(this.questionsService.getQuestion(0));
-    }
-
-    @Get('api/results')
-    async results(@Res() res) {
-        res.json(this.playersService.calculateResults());
-    }
-
-    @Get('api/scores')
-    async scores(@Res() res) {
-        res.json(this.playersService.calculateScores());
     }
 }
