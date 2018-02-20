@@ -2,21 +2,12 @@ import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
+import { Lie, Question } from '../types';
 import Socket = SocketIOClient.Socket;
-
-interface Lie {
-    pseudo: string;
-    lieValue: string;
-}
-
-interface Question {
-    text: string;
-    answers: string[];
-    lies: string[];
-}
 
 interface Props {
     readonly pseudo: string;
+    setResultsAndScores: (results, scores) => void;
 }
 
 interface State {
@@ -40,7 +31,6 @@ export default class Playing extends React.Component<Props, State> {
         this.loadLies = this.loadLies.bind(this);
         this.sendLie = this.sendLie.bind(this);
         this.chooseLie = this.chooseLie.bind(this);
-        this.newGame = this.newGame.bind(this);
 
         this.state = {
             question: {text: '', answers: [], lies: []},
@@ -55,21 +45,8 @@ export default class Playing extends React.Component<Props, State> {
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
-        this.socket.on('newGame', this.newGame);
     }
 
-    newGame() {
-        this.setState({
-            question: {text: '', answers: [], lies: []},
-            lieAnswered: '',
-            lies: [],
-            lieSent: false,
-            displayLies: false,
-            goToResults: false,
-            isGoodAnswer: false,
-            currentPseudo: this.props.pseudo
-        });
-    }
 
     changeValue(event: React.FormEvent<HTMLInputElement>) {
         if (this.state.question.answers.some(answer => answer === event.currentTarget.value)) {
@@ -101,7 +78,8 @@ export default class Playing extends React.Component<Props, State> {
     chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
         this.setState({displayLies: false});
         e.preventDefault();
-        this.socket.on('goToResults', () => {
+        this.socket.on('goToResults', ({results, scores}) => {
+            this.props.setResultsAndScores(results, scores);
             this.setState({goToResults: true});
         });
         this.socket.emit('lieChoosen', {
@@ -115,9 +93,7 @@ export default class Playing extends React.Component<Props, State> {
 
     componentWillMount() {
         fetch('/api/question')
-            .then(result => {
-                return result.json();
-            })
+            .then(result => result.json())
             .then((question: Question) => {
                 const trueQuestion: Question = {text: question.text, answers: question.answers, lies: question.lies};
                 this.setState({question: trueQuestion});

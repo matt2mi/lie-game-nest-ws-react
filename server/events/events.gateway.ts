@@ -65,7 +65,15 @@ export class EventsGateway {
         }
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
-            this.webSocketServer.emit('goToResults');
+            this.webSocketServer.emit('goToResults', {
+                results: this.playersService.calculateResults(),
+                scores: this.playersService.calculateScores()
+            });
+            this.playersService.endOfRound();
+            this.nbAnswers = 0;
+            setTimeout(() => {
+                this.webSocketServer.emit('nextQuestion');
+            }, 10000);
         }
     }
 }

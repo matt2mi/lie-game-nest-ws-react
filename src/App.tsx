@@ -4,8 +4,8 @@ import { Route, Switch } from 'react-router';
 import Login from './containers/Login';
 import NavHeader from './containers/NavHeader';
 import Playing from './containers/Playing';
+import Results from './containers/Results';
 import WaitingPlayers from './components/WaitingPlayers';
-import Results from './components/Results';
 
 class App extends React.Component {
     render() {
