@@ -9,7 +9,7 @@ import { Answer } from '../types';
 export class EventsGateway {
     @WebSocketServer() webSocketServer;
     nbAnswers = 0;
-    nbRounds = 0;
+    nbRounds = 1;
 
     constructor(private readonly playersService: PlayersService,
                 private readonly questionsService: QuestionsService) {
@@ -79,8 +79,6 @@ export class EventsGateway {
                     this.webSocketServer.emit('nextQuestion');
                     this.nbRounds++;
                 }, 10000);
-            } else {
-                this.webSocketServer.emit('gameOver');
             }
         }
     }

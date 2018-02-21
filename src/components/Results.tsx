@@ -14,7 +14,6 @@ interface Props {
 interface State {
     readonly goNext: boolean;
     readonly decounter: number;
-    readonly gameOver: boolean;
 }
 
 export default class Results extends React.Component<Props, State> {
@@ -36,12 +35,10 @@ export default class Results extends React.Component<Props, State> {
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
         this.socket.on('nextQuestion', this.nextQuestion);
-        this.socket.on('gameOver', () => this.setState({gameOver: true}));
 
         this.state = {
             goNext: false,
             decounter: 10,
-            gameOver: false
         };
         if (this.props.nbRounds <= 8) {
             this.startTimer();
@@ -67,58 +64,57 @@ export default class Results extends React.Component<Props, State> {
         }
         return (
             <div className="base-div-content">
-                {
-                    !this.state.gameOver &&
-                    <div className="row">
-                        <div className="card">
-                            <div className="card-header">
-                                Resultats !
-                            </div>
-                            <div className="card-block p-3 ">
+                <div className="row">
+                    <div className="card">
+                        <div className="card-header">
+                            Resultats !
+                        </div>
+                        <div className="card-block p-3 ">
 
-                                {this.props.results.map(res => (
-                                    <div
-                                        className="col m-1"
-                                        style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
-                                        key={res.id}
-                                    >
-                                        {
-                                            res.liarPseudo === 'truth' ?
-                                                res.playerPseudo + ' a choisi la bonne réponse (' + res.lieValue +
-                                                ') +500 !'
+                            {this.props.results.map(res => (
+                                <div
+                                    className="col m-1"
+                                    style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
+                                    key={res.id}
+                                >
+                                    {
+                                        res.liarPseudo === 'truth' ?
+                                            res.playerPseudo + ' a choisi la bonne réponse (' + res.lieValue +
+                                            ') +500 !'
+                                            :
+                                            res.liarPseudo === 'gameLie' ?
+                                                res.playerPseudo + ' a choisi notre mito (' + res.lieValue +
+                                                ') -400 !'
                                                 :
-                                                res.liarPseudo === 'gameLie' ?
-                                                    res.playerPseudo + ' a choisi notre mito (' + res.lieValue +
-                                                    ') -400 !'
-                                                    :
-                                                    res.playerPseudo + ' a choisi le mito de ' + res.liarPseudo +
-                                                    ' (' + res.lieValue + ') +200 pour ' + res.liarPseudo
-                                        }
-                                    </div>
-                                ))}
-                            </div>
+                                                res.playerPseudo + ' a choisi le mito de ' + res.liarPseudo +
+                                                ' (' + res.lieValue + ') +200 pour ' + res.liarPseudo
+                                    }
+                                </div>
+                            ))}
                         </div>
                     </div>
-                }
-                <div className="row">
-                    Scores {!this.state.gameOver ? this.props.nbRounds + '/8 tours' : ' finaux'}
                 </div>
-                <div className="row">
-                    {this.props.scores.map(score => (
-                        <div className="col-2" key={score.id}>
-                            {score.pseudo}
-                        </div>
-                    ))}
-                </div>
-                <div className="row">
-                    {this.props.scores.map(score => (
-                        <div className="col-2" key={score.id}>
-                            {score.value}
-                        </div>
-                    ))}
+                <div>
+                    <div className="row">
+                        Scores{this.props.nbRounds >= 8 ? ' finaux' : ' - question n°' + this.props.nbRounds + ' sur 8'}
+                    </div>
+                    <div className="row">
+                        {this.props.scores.map(score => (
+                            <div className="col-2" key={score.id}>
+                                {score.pseudo}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="row">
+                        {this.props.scores.map(score => (
+                            <div className="col-2" key={score.id}>
+                                {score.value}
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 {
-                    !this.state.gameOver &&
+                    this.props.nbRounds >= 8 ? null :
                     <div className="row">
                         Question suivante dans {this.state.decounter} secondes
                     </div>
