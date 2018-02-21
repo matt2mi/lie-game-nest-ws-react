@@ -6,7 +6,8 @@ const mapStateToProps = (state: StoreState) => {
     return {
         pseudo: state.pseudo,
         results: state.results,
-        scores: state.scores
+        scores: state.scores,
+        nbRounds: state.nbRounds
     };
 };
 

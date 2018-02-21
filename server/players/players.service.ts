@@ -3,7 +3,7 @@ import { Player } from '../types';
 
 @Component()
 export class PlayersService {
-    private readonly _maxPlayers = 2;
+    private readonly _maxPlayers = 1;
     get maxPlayers(): number {
         return this._maxPlayers;
     }

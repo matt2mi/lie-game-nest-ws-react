@@ -11,7 +11,12 @@ export interface SetResultsAndScores {
     payload: { results, scores };
 }
 
-export type PseudoAction = SetPseudo | SetResultsAndScores;
+export interface SetNbRounds {
+    type: constants.SET_NB_ROUNDS;
+    payload: number;
+}
+
+export type PseudoAction = SetPseudo | SetResultsAndScores | SetNbRounds;
 
 export const setPseudo = (pseudo: string): SetPseudo => {
     return {
@@ -24,5 +29,12 @@ export const setResultsAndScores = (results: Result[], scores: Score[]): SetResu
     return {
         type: constants.SET_RESULTS_SCORES,
         payload: {results, scores}
+    };
+};
+
+export const setNbRounds = (nbRounds: number): SetNbRounds => {
+    return {
+        type: constants.SET_NB_ROUNDS,
+        payload: nbRounds
     };
 };

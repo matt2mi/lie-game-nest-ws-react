@@ -14,7 +14,8 @@ const store = createStore<StoreState>(
     {
         pseudo: '',
         results: [],
-        scores: []
+        scores: [],
+        nbRounds: 0
     },
     // window.__REDUX_DEVTOOLS_EXTENSION__()
 );

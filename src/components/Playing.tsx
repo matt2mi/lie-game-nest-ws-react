@@ -8,6 +8,7 @@ import Socket = SocketIOClient.Socket;
 interface Props {
     readonly pseudo: string;
     setResultsAndScores: (results, scores) => void;
+    setNbRounds: (nbRounds: number) => void;
 }
 
 interface State {
@@ -78,8 +79,9 @@ export default class Playing extends React.Component<Props, State> {
     chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
         this.setState({displayLies: false});
         e.preventDefault();
-        this.socket.on('goToResults', ({results, scores}) => {
+        this.socket.on('goToResults', ({results, scores, nbRounds}) => {
             this.props.setResultsAndScores(results, scores);
+            this.props.setNbRounds(nbRounds);
             this.setState({goToResults: true});
         });
         this.socket.emit('lieChoosen', {

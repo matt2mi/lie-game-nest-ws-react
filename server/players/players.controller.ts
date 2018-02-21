@@ -21,6 +21,6 @@ export class PlayersController {
     @Get('api/question')
     async question(@Res() res) {
         // TODO faire une suite de question
-        res.json(this.questionsService.getQuestion(0));
+        res.json(this.questionsService.getQuestion());
     }
 }

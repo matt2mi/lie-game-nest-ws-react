@@ -9,6 +9,7 @@ import { Answer } from '../types';
 export class EventsGateway {
     @WebSocketServer() webSocketServer;
     nbAnswers = 0;
+    nbRounds = 0;
 
     constructor(private readonly playersService: PlayersService,
                 private readonly questionsService: QuestionsService) {
@@ -42,8 +43,8 @@ export class EventsGateway {
         this.playersService.setInLiesMap(lieValue, pseudo);
         console.log('lie received', lieValue, 'from', pseudo);
         if (this.playersService.getLiesMapSize() === this.playersService.players.length) {
-            this.playersService.setInLiesMap(this.questionsService.getAnswers(0)[0], 'truth');
-            this.playersService.setInLiesMap(this.questionsService.getLies(0)[0], 'gameLie');
+            this.playersService.setInLiesMap(this.questionsService.getAnswers()[0], 'truth');
+            this.playersService.setInLiesMap(this.questionsService.getLies()[0], 'gameLie');
             console.log('all lies sent');
             this.webSocketServer.emit(
                 'loadLies',
@@ -67,13 +68,20 @@ export class EventsGateway {
         if (this.nbAnswers === this.playersService.players.length) {
             this.webSocketServer.emit('goToResults', {
                 results: this.playersService.calculateResults(),
-                scores: this.playersService.calculateScores()
+                scores: this.playersService.calculateScores(),
+                nbRounds: this.nbRounds
             });
             this.playersService.endOfRound();
+            this.questionsService.nextQuestion();
             this.nbAnswers = 0;
-            setTimeout(() => {
-                this.webSocketServer.emit('nextQuestion');
-            }, 10000);
+            if (this.nbRounds <= 7) {
+                setTimeout(() => {
+                    this.webSocketServer.emit('nextQuestion');
+                    this.nbRounds++;
+                }, 10000);
+            } else {
+                this.webSocketServer.emit('gameOver');
+            }
         }
     }
 }

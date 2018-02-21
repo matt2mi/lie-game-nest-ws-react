@@ -2,8 +2,10 @@ import { Question } from '../types';
 
 export class QuestionsService {
     questions: Question[];
+    currentQuestionId: number;
 
     constructor() {
+        this.currentQuestionId = 0;
         this.questions = [
             {
                 text: 'El colacho est un festival espagnol où les gens s\'habillent en diables et sautent au dessus de ...',
@@ -60,11 +62,11 @@ export class QuestionsService {
             }, {
                 text: 'D\'après une étude de l\'université de Jena, on se rapelle plus facilement des gens ...',
                 answers: ['moches'],
-                lies: ['grands', 'gros']
+                lies: ['cons', 'gros']
             }, {
                 text: 'La cause de la mort d\'un cascadeur pendant qu\'il traversait une rivière sur une tyrolienne avec ' +
                 'sa queue de cheval',
-                answers: ['attaque cardiaque'],
+                answers: ['attaque cardiaque', 'cardiaque'],
                 lies: ['scalpé', 'perte de sang']
             }, {
                 text: 'Coca-Cola a, un jour, commandé un jeu vidéo sur Atari nommé "Pepsi ..."',
@@ -74,19 +76,22 @@ export class QuestionsService {
         ];
     }
 
-    getQuestion(id: number): Question {
-        console.log('getQuestion');
-        return this.questions[id];
+    getQuestion(): Question {
+        return this.questions[this.currentQuestionId];
     }
 
-    getAnswers(idQuestion: number): string[] {
-        console.log('getAnswers');
-        return this.questions[idQuestion].answers;
+    getAnswers(): string[] {
+        return this.questions[this.currentQuestionId].answers;
     }
 
-    getLies(idQuestion: number): string[] {
-        console.log('getLies');
-        return this.questions[idQuestion].lies;
+    getLies(): string[] {
+        return this.questions[this.currentQuestionId].lies;
+    }
+
+    nextQuestion() {
+        if (this.currentQuestionId >= this.questions.length - 1) this.currentQuestionId = 0;
+        else this.currentQuestionId++;
     }
 }
+
 // autre : https://www.youtube.com/watch?v=Wzt4pygZWwA

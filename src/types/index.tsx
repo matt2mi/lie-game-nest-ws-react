@@ -2,6 +2,7 @@ export interface StoreState {
     pseudo?: string;
     results?: Result[];
     scores?: Score[];
+    nbRounds?: number;
 }
 
 export interface Lie {

@@ -8,11 +8,13 @@ interface Props {
     readonly pseudo: string;
     readonly results: Result[];
     readonly scores: Score[];
+    readonly nbRounds: number;
 }
 
 interface State {
     readonly goNext: boolean;
-    decounter: number;
+    readonly decounter: number;
+    readonly gameOver: boolean;
 }
 
 export default class Results extends React.Component<Props, State> {
@@ -34,16 +36,20 @@ export default class Results extends React.Component<Props, State> {
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
         this.socket.on('nextQuestion', this.nextQuestion);
+        this.socket.on('gameOver', () => this.setState({gameOver: true}));
 
         this.state = {
             goNext: false,
-            decounter: 10
+            decounter: 10,
+            gameOver: false
         };
-        this.startTimer();
+        if (this.props.nbRounds <= 8) {
+            this.startTimer();
+        }
     }
 
     startTimer() {
-        if (this.state.decounter >= 0) {
+        if (this.state.decounter > 0) {
             setTimeout(() => {
                 this.setState({decounter: this.state.decounter - 1});
                 this.startTimer();
@@ -61,38 +67,41 @@ export default class Results extends React.Component<Props, State> {
         }
         return (
             <div className="base-div-content">
-                <div className="row">
-                    <div className="card">
-                        <div className="card-header">
-                            Resultats !
-                        </div>
-                        <div className="card-block p-3 ">
+                {
+                    !this.state.gameOver &&
+                    <div className="row">
+                        <div className="card">
+                            <div className="card-header">
+                                Resultats !
+                            </div>
+                            <div className="card-block p-3 ">
 
-                            {this.props.results.map(res => (
-                                <div
-                                    className="col m-1"
-                                    style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
-                                    key={res.id}
-                                >
-                                    {
-                                        res.liarPseudo === 'truth' ?
-                                            res.playerPseudo + ' a choisi la bonne réponse (' + res.lieValue +
-                                            ') +500 !'
-                                            :
-                                            res.liarPseudo === 'gameLie' ?
-                                                res.playerPseudo + ' a choisi notre mito (' + res.lieValue +
-                                                ') -400 !'
+                                {this.props.results.map(res => (
+                                    <div
+                                        className="col m-1"
+                                        style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
+                                        key={res.id}
+                                    >
+                                        {
+                                            res.liarPseudo === 'truth' ?
+                                                res.playerPseudo + ' a choisi la bonne réponse (' + res.lieValue +
+                                                ') +500 !'
                                                 :
-                                                res.playerPseudo + ' a choisi le mito de ' + res.liarPseudo +
-                                                ' (' + res.lieValue + ') +200 pour ' + res.liarPseudo
-                                    }
-                                </div>
-                            ))}
+                                                res.liarPseudo === 'gameLie' ?
+                                                    res.playerPseudo + ' a choisi notre mito (' + res.lieValue +
+                                                    ') -400 !'
+                                                    :
+                                                    res.playerPseudo + ' a choisi le mito de ' + res.liarPseudo +
+                                                    ' (' + res.lieValue + ') +200 pour ' + res.liarPseudo
+                                        }
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
                 <div className="row">
-                    Scores !
+                    Scores {!this.state.gameOver ? this.props.nbRounds + '/8 tours' : ' finaux'}
                 </div>
                 <div className="row">
                     {this.props.scores.map(score => (
@@ -108,9 +117,12 @@ export default class Results extends React.Component<Props, State> {
                         </div>
                     ))}
                 </div>
-                <div className="row">
-                    {this.state.decounter}
-                </div>
+                {
+                    !this.state.gameOver &&
+                    <div className="row">
+                        Question suivante dans {this.state.decounter} secondes
+                    </div>
+                }
             </div>
         );
     }
