@@ -11,6 +11,7 @@ interface Props {
 
 interface State {
     readonly pseudo: string;
+    readonly errorMsg: string;
     readonly connected: boolean;
 }
 
@@ -22,6 +23,7 @@ export default class Login extends React.Component<Props, State> {
 
         this.state = {
             pseudo: '',
+            errorMsg: null,
             connected: false
         };
 
@@ -34,16 +36,22 @@ export default class Login extends React.Component<Props, State> {
     }
 
     subscribeToApp(cb: (err: string) => void, pseudo: string): void {
-        this.socket.on('updatePlayers', () => {
-            if (!this.state.connected) cb('');
+        this.socket.on('updatePlayers', (players, errorMsg) => {
+            if (errorMsg) {
+                this.setState({errorMsg});
+            } else if (!this.state.connected) {
+                cb('');
+            }
         });
         this.socket.emit('subscribeToApp', pseudo);
     }
 
     changeValue(event: React.FormEvent<HTMLInputElement>) {
         this.setState({
+            errorMsg: null,
             pseudo: event.currentTarget.value
         });
+        event.preventDefault();
     }
 
     login(event: SyntheticEvent<HTMLButtonElement>) {
@@ -81,6 +89,7 @@ export default class Login extends React.Component<Props, State> {
                                 <button onClick={this.login}>
                                     Login
                                 </button>
+                                {this.state.errorMsg ? <span className="error">{this.state.errorMsg}</span> : null}
                             </form>
                         </div>
                     </div>

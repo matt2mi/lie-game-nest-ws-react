@@ -8,7 +8,10 @@ export interface SetPseudo {
 
 export interface SetResultsAndScores {
     type: constants.SET_RESULTS_SCORES;
-    payload: { results, scores };
+    payload: {
+        results: ReadonlyArray<Result>,
+        scores: ReadonlyArray<Score>
+    };
 }
 
 export interface SetNbRounds {
@@ -25,7 +28,8 @@ export const setPseudo = (pseudo: string): SetPseudo => {
     };
 };
 
-export const setResultsAndScores = (results: Result[], scores: Score[]): SetResultsAndScores => {
+export const setResultsAndScores = (results: ReadonlyArray<Result>,
+                                    scores: ReadonlyArray<Score>): SetResultsAndScores => {
     return {
         type: constants.SET_RESULTS_SCORES,
         payload: {results, scores}

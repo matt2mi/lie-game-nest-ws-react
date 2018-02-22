@@ -3,7 +3,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import { PlayersService } from '../players/players.service';
 import { QuestionsService } from '../questions/questions.service';
-import { Answer } from '../types';
+import { Answer, Player } from '../types';
 
 @WebSocketGateway({port: 3001})
 export class EventsGateway {
@@ -28,12 +28,18 @@ export class EventsGateway {
     @SubscribeMessage('subscribeToApp')
     onSubscribe(socketClient, pseudo): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
-            this.playersService.addPlayer(socketClient, pseudo);
-            console.log(this.playersService.getPseudoFromPlayersMap(socketClient), 'connected');
-            this.webSocketServer.emit('updatePlayers', this.playersService.players);
+            if (this.playersService.players.some((player: Player) => pseudo === player.pseudo)) {
+                const errorMsg = 'Pseudo déjà pris :/';
+                console.log(errorMsg);
+                this.webSocketServer.emit('updatePlayers', this.playersService.players, errorMsg);
+            } else {
+                this.playersService.addPlayer(socketClient, pseudo);
+                console.log(this.playersService.getPseudoFromPlayersMap(socketClient), 'connected');
+                this.webSocketServer.emit('updatePlayers', this.playersService.players);
 
-            if (this.playersService.players.length === this.playersService.maxPlayers) {
-                this.webSocketServer.emit('players-list-full', this.playersService.players);
+                if (this.playersService.players.length === this.playersService.maxPlayers) {
+                    this.webSocketServer.emit('players-list-full', this.playersService.players);
+                }
             }
         }
     }

@@ -56,7 +56,7 @@ class WaitingPlayers extends React.Component<Props, State> {
             });
 
         Promise.all([playersPromise, maxPlayersPromise])
-            .then((results: any[]) => {
+            .then((results: Player | number[]) => {
                 const truePlayers: Player[] = results[0].map((res: Player) => {
                     return {id: res.id, pseudo: res.pseudo};
                 });
@@ -77,7 +77,7 @@ class WaitingPlayers extends React.Component<Props, State> {
                     <div className="row">
                         {this.state.players.length + '/' + this.state.nbMaxPlayers} players
                     </div>
-                    {this.state.players.map(player => {
+                    {this.state.players.map((player: Player) => {
                         return (<div className="row" key={player.id}>{player.pseudo}</div>);
                     })}
                 </div>

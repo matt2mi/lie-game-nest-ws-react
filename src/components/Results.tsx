@@ -47,10 +47,12 @@ export default class Results extends React.Component<Props, State> {
 
     startTimer() {
         if (this.state.decounter > 0) {
-            setTimeout(() => {
-                this.setState({decounter: this.state.decounter - 1});
-                this.startTimer();
-            }, 1000);
+            setTimeout(
+                () => {
+                    this.setState({decounter: this.state.decounter - 1});
+                    this.startTimer();
+                },
+                1000);
         }
     }
 

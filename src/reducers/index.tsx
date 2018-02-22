@@ -7,9 +7,14 @@ export function reducer(state: StoreState, action: PseudoAction): StoreState {
         case SET_PSEUDO:
             return {...state, pseudo: action.payload};
         case SET_RESULTS_SCORES:
-            const sortedScores: ReadonlyArray<Score> = action.payload.scores.sort((a, b) => {
-                if (a.value < b.value) return -1;
-                if (a.value == b.value) return 0;
+            const mutatingScores = action.payload.scores as Score[];
+            const sortedScores: ReadonlyArray<Score> = mutatingScores.sort((a, b) => {
+                if (a.value < b.value) {
+                    return -1;
+                }
+                if (a.value === b.value) {
+                    return 0;
+                }
                 return 1;
             });
             return {...state, results: action.payload.results, scores: sortedScores};

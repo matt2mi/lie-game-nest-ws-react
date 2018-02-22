@@ -2,12 +2,12 @@ import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Lie, Question } from '../types';
+import { Lie, Question, Result, Score } from '../types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
     readonly pseudo: string;
-    setResultsAndScores: (results, scores) => void;
+    setResultsAndScores: (results: ReadonlyArray<Result>, scores: ReadonlyArray<Score>) => void;
     setNbRounds: (nbRounds: number) => void;
 }
 
@@ -59,7 +59,6 @@ export default class Playing extends React.Component<Props, State> {
                 console.error(e);
             });
     }
-
 
     changeValue(event: React.FormEvent<HTMLInputElement>) {
         if (this.state.question.answers.some(answer => answer === event.currentTarget.value)) {
