@@ -48,6 +48,18 @@ export default class Playing extends React.Component<Props, State> {
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
     }
 
+    componentWillMount() {
+        fetch('/api/question')
+            .then(result => result.json())
+            .then((question: Question) => {
+                const trueQuestion: Question = {text: question.text, answers: question.answers, lies: question.lies};
+                this.setState({question: trueQuestion});
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }
+
 
     changeValue(event: React.FormEvent<HTMLInputElement>) {
         if (this.state.question.answers.some(answer => answer === event.currentTarget.value)) {
@@ -91,18 +103,6 @@ export default class Playing extends React.Component<Props, State> {
             },
             pseudo: this.props.pseudo
         });
-    }
-
-    componentWillMount() {
-        fetch('/api/question')
-            .then(result => result.json())
-            .then((question: Question) => {
-                const trueQuestion: Question = {text: question.text, answers: question.answers, lies: question.lies};
-                this.setState({question: trueQuestion});
-            })
-            .catch(e => {
-                console.error(e);
-            });
     }
 
     render() {

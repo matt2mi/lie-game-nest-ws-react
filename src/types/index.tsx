@@ -1,7 +1,7 @@
 export interface StoreState {
     pseudo?: string;
-    results?: Result[];
-    scores?: Score[];
+    results?: ReadonlyArray<Result>;
+    scores?: ReadonlyArray<Score>;
     nbRounds?: number;
 }
 
@@ -12,8 +12,8 @@ export interface Lie {
 
 export interface Question {
     text: string;
-    answers: string[];
-    lies: string[];
+    answers: ReadonlyArray<string>;
+    lies: ReadonlyArray<string>;
 }
 
 export interface Result {

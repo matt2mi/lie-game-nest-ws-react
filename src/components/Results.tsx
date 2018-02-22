@@ -69,8 +69,7 @@ export default class Results extends React.Component<Props, State> {
                         <div className="card-header">
                             Resultats !
                         </div>
-                        <div className="card-block p-3 ">
-
+                        <div className="card-block p-3">
                             {this.props.results.map(res => (
                                 <div
                                     className="col m-1"
@@ -96,28 +95,27 @@ export default class Results extends React.Component<Props, State> {
                 </div>
                 <div>
                     <div className="row">
-                        Scores{this.props.nbRounds >= 8 ? ' finaux' : ' - question n°' + this.props.nbRounds + ' sur 8'}
-                    </div>
-                    <div className="row">
-                        {this.props.scores.map(score => (
-                            <div className="col-2" key={score.id}>
-                                {score.pseudo}
+                        <div className="card">
+                            <div className="card-header">
+                                Scores{this.props.nbRounds >= 8 ?
+                                ' finaux' :
+                                ' - question n°' + this.props.nbRounds + ' sur 8'}
                             </div>
-                        ))}
-                    </div>
-                    <div className="row">
-                        {this.props.scores.map(score => (
-                            <div className="col-2" key={score.id}>
-                                {score.value}
+                            <div className="card-block p-3">
+                                {this.props.scores.map((score, id) => (
+                                    <div className="col" key={score.id}>
+                                        {id + 1 + ' - ' + score.pseudo + ' - ' + score.value}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
                 </div>
                 {
                     this.props.nbRounds >= 8 ? null :
-                    <div className="row">
-                        Question suivante dans {this.state.decounter} secondes
-                    </div>
+                        <div className="row">
+                            Question suivante dans {this.state.decounter} secondes
+                        </div>
                 }
             </div>
         );
