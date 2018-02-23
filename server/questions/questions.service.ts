@@ -3,9 +3,9 @@ import { Question } from '../types';
 export class QuestionsService {
     questions: Question[];
     currentQuestionId: number;
+    allreadyAskedId: Array<number>;
 
     constructor() {
-        this.currentQuestionId = 0;
         this.questions = [
             {
                 text: 'El colacho est un festival espagnol où les gens s\'habillent en diables et sautent au dessus de ...',
@@ -74,6 +74,8 @@ export class QuestionsService {
                 lies: ['parade', 'problem']
             }
         ];
+        this.currentQuestionId = Math.floor(Math.random() * this.questions.length);
+        this.allreadyAskedId = [this.currentQuestionId];
     }
 
     getQuestion(): Question {
@@ -88,9 +90,16 @@ export class QuestionsService {
         return this.questions[this.currentQuestionId].lies;
     }
 
-    nextQuestion() {
-        if (this.currentQuestionId >= this.questions.length - 1) this.currentQuestionId = 0;
-        else this.currentQuestionId++;
+    nextQuestion(): void {
+        this.currentQuestionId = Math.floor(Math.random() * this.questions.length);
+        if (this.allreadyAskedId.some((id) => id === this.currentQuestionId)) {
+            return this.nextQuestion();
+        }
+        this.allreadyAskedId.push(this.currentQuestionId);
+    }
+
+    endOfRound() {
+        this.allreadyAskedId = [];
     }
 }
 

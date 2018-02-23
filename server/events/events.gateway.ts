@@ -78,6 +78,7 @@ export class EventsGateway {
                 nbRounds: this.nbRounds
             });
             this.playersService.endOfRound();
+            this.questionsService.endOfRound();
             this.questionsService.nextQuestion();
             this.nbAnswers = 0;
             if (this.nbRounds <= 7) {
