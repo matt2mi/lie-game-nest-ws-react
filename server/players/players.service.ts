@@ -19,7 +19,7 @@ export class PlayersService {
 
     // TODO TS getter => getMap(truc) return map.get(truc)
     private playersMap: Map<any, string> = new Map(); // set(socket, pseudo)
-    private liesMap: Map<string, string> = new Map(); // ('mito', 'pseudo')
+    private liesMap: Map<any, { pseudo: string, lieValue: string }> = new Map(); // (socketClient, {pseudo: string, lieValue: string})
     private answersMap: Map<string, string[]> = new Map(); // (lieValue: 'mito', ['pseudo'])
     private scoresMap: Map<string, number> = new Map(); // pseudo, score
 
@@ -43,8 +43,8 @@ export class PlayersService {
         return this.playersMap.get(socketClient);
     }
 
-    setInLiesMap(lieValue: string, pseudo: string) {
-        this.liesMap.set(lieValue, pseudo);
+    setInLiesMap(socket: any, lieValue: string, pseudo: string) {
+        this.liesMap.set(socket, {lieValue, pseudo});
     }
 
     getLiesMap(): Map<string, string> {
@@ -53,6 +53,14 @@ export class PlayersService {
 
     getLiesMapSize(): number {
         return this.liesMap.size;
+    }
+
+    getLiarPseudosFromLieValue(lieValue: string): string[] {
+        const pseudos: string[] = [];
+        this.liesMap.forEach(lie => {
+            if (lie.lieValue === lieValue) pseudos.push(lie.pseudo);
+        });
+        return pseudos;
     }
 
     setInAnswersMap(lieValue: string, pseudos: string[]) {
@@ -87,7 +95,7 @@ export class PlayersService {
             .forEach(answer => {
                 answer.pseudos.forEach((pseudo: string) => results.push({
                     lieValue: answer.lieValue,
-                    liarPseudo: this.liesMap.get(answer.lieValue),
+                    liarPseudos: this.getLiarPseudosFromLieValue(answer.lieValue),
                     playerPseudo: pseudo
                 }));
             });
@@ -98,27 +106,29 @@ export class PlayersService {
         if (this.scoresMap.size < 1) this.players.forEach(player => this.scoresMap.set(player.pseudo, 0));
 
         for (let [lieValue, pseudos] of Array.from(this.answersMap)) {
-            const liarPseudo = this.liesMap.get(lieValue);
-            if (liarPseudo === 'truth') {
-                pseudos.forEach((pseudo: string) => {
-                    const score = this.scoresMap.get(pseudo);
+            const liarPseudos = this.getLiarPseudosFromLieValue(lieValue);
+            liarPseudos.forEach(liarPseudo => {
+                if (liarPseudo === 'truth') {
+                    pseudos.forEach((pseudo: string) => {
+                        const score = this.scoresMap.get(pseudo);
+                        if (score !== undefined) {
+                            this.scoresMap.set(pseudo, score + 500);
+                        }
+                    });
+                } else if (liarPseudo === 'gameLie') {
+                    pseudos.forEach((pseudo: string) => {
+                        const score = this.scoresMap.get(pseudo);
+                        if (score !== undefined) {
+                            this.scoresMap.set(pseudo, score - 400);
+                        }
+                    });
+                } else if (liarPseudo) {
+                    const score = this.scoresMap.get(liarPseudo);
                     if (score !== undefined) {
-                        this.scoresMap.set(pseudo, score + 500);
+                        this.scoresMap.set(liarPseudo, score + 200 * pseudos.length);
                     }
-                });
-            } else if (liarPseudo === 'gameLie') {
-                pseudos.forEach((pseudo: string) => {
-                    const score = this.scoresMap.get(pseudo);
-                    if (score !== undefined) {
-                        this.scoresMap.set(pseudo, score - 400);
-                    }
-                });
-            } else if (liarPseudo) {
-                const score = this.scoresMap.get(liarPseudo);
-                if (score !== undefined) {
-                    this.scoresMap.set(liarPseudo, score + 200 * pseudos.length);
                 }
-            }
+            });
         }
 
         return PlayersService.mapToArray(this.scoresMap, 'pseudo', 'value');

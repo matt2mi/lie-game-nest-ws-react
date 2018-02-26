@@ -46,14 +46,15 @@ export class EventsGateway {
 
     @SubscribeMessage('lieAnswered')
     lieAnswered(socketClient, {lieValue, pseudo}): void {
-        this.playersService.setInLiesMap(lieValue, pseudo);
+        this.playersService.setInLiesMap(socketClient, lieValue, pseudo);
         console.log('lie received', lieValue, 'from', pseudo);
         if (this.playersService.getLiesMapSize() === this.playersService.players.length) {
-            this.playersService.setInLiesMap(this.questionsService.getAnswers()[0], 'truth');
-            this.playersService.setInLiesMap(this.questionsService.getLies()[0], 'gameLie');
+            this.playersService.setInLiesMap(socketClient, this.questionsService.getAnswers()[0], 'truth');
+            this.playersService.setInLiesMap(socketClient, this.questionsService.getLies()[0], 'gameLie');
             console.log('all lies sent');
             this.webSocketServer.emit(
                 'loadLies',
+                // TODO pas marché
                 PlayersService.mapToArray(
                     this.playersService.getLiesMap(),
                     'lieValue',
@@ -73,7 +74,7 @@ export class EventsGateway {
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
             this.webSocketServer.emit('goToResults', {
-                results: this.playersService.calculateResults(),
+                results: this.playersService.calculateResults(), // TODO champ liarPseudos => gestion front
                 scores: this.playersService.calculateScores(),
                 nbRounds: this.nbRounds
             });
