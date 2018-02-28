@@ -142,7 +142,7 @@ export default class Playing extends React.Component<Props, State> {
                                 <div className="col">
                                     Choisis la bonne réponse :
                                 </div>
-                                {this.state.lies.map((lie, id) => {
+                                {this.shuffle(this.state.lies).map((lie, id) => {
                                     if (!lie.pseudos.some(pseudo => pseudo === this.state.currentPseudo)) {
                                         return (<div className="col" key={id}>
                                             <button
@@ -162,5 +162,13 @@ export default class Playing extends React.Component<Props, State> {
                 </div>
             </div>
         );
+    }
+
+    private shuffle(array: any[]): any[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 }

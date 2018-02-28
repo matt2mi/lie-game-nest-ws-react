@@ -66,17 +66,13 @@ export class EventsGateway {
 
     @SubscribeMessage('lieChoosen')
     lieChoosen(socketClient, answer: Answer): void {
-        console.log('lie choosen by', answer.pseudo, ':', answer.lie.value, '(', answer.lie.pseudo, ')');
-        if (this.playersService.getAnswersMap().get(answer.lie.value) !== undefined) {
-            this.playersService.addPseudoInAnswersMap(answer.lie.value, answer.pseudo);
-        } else {
-            this.playersService.setInAnswersMap(answer.lie.value, [answer.pseudo]);
-        }
+        console.log('lie choosen by', answer.pseudo, ':', answer.lie);
+        this.playersService.setPseudoInAnswersMap(answer.lie.value, answer.pseudo);
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
             this.nbAnswers = 0;
             this.webSocketServer.emit('goToResults', {
-                results: this.playersService.calculateResults(), // TODO champ liarPseudos => gestion front
+                results: this.playersService.calculateResults(),
                 scores: this.playersService.calculateScores(),
                 nbRounds: this.nbRounds
             });

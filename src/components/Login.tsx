@@ -13,6 +13,7 @@ interface State {
     readonly pseudo: string;
     readonly errorMsg: string;
     readonly connected: boolean;
+    readonly disableLoginBtn: boolean;
 }
 
 export default class Login extends React.Component<Props, State> {
@@ -24,7 +25,8 @@ export default class Login extends React.Component<Props, State> {
         this.state = {
             pseudo: '',
             errorMsg: null,
-            connected: false
+            connected: false,
+            disableLoginBtn: false
         };
 
         const url = window.location.href;
@@ -38,7 +40,7 @@ export default class Login extends React.Component<Props, State> {
     subscribeToApp(cb: (err: string) => void, pseudo: string): void {
         this.socket.on('updatePlayers', (players, errorMsg) => {
             if (errorMsg) {
-                this.setState({errorMsg});
+                this.setState({errorMsg, disableLoginBtn: true});
             } else if (!this.state.connected) {
                 cb('');
             }
@@ -49,6 +51,7 @@ export default class Login extends React.Component<Props, State> {
     changeValue(event: React.FormEvent<HTMLInputElement>) {
         this.setState({
             errorMsg: null,
+            disableLoginBtn: false,
             pseudo: event.currentTarget.value
         });
         event.preventDefault();
@@ -56,17 +59,22 @@ export default class Login extends React.Component<Props, State> {
 
     login(event: SyntheticEvent<HTMLButtonElement>) {
         event.preventDefault();
-        this.subscribeToApp(
-            (error: string) => {
-                if (error.length > 0) {
-                    console.error(error);
-                } else {
-                    this.props.setPseudo(this.state.pseudo);
-                    this.setState({connected: true});
-                }
-            },
-            this.state.pseudo
-        );
+        if (this.state.pseudo === '') {
+            this.setState({errorMsg: 'need valid pseudo', disableLoginBtn: true});
+        } else {
+            this.subscribeToApp(
+                (errorMsg: string) => {
+                    if (errorMsg.length > 0) {
+                        console.error(errorMsg);
+                        this.setState({errorMsg, disableLoginBtn: true});
+                    } else {
+                        this.props.setPseudo(this.state.pseudo);
+                        this.setState({connected: true});
+                    }
+                },
+                this.state.pseudo
+            );
+        }
     }
 
     render() {
@@ -82,14 +90,26 @@ export default class Login extends React.Component<Props, State> {
                         </div>
                         <div className="card-block p-3">
                             <form>
-                                <div className="form-group">
-                                    <label>Pseudo</label>
-                                    <input type="text" className="form-control" onChange={this.changeValue}/>
+                                <div className="row">
+                                    <div className="form-group">
+                                        <label>Pseudo</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={this.changeValue}
+                                            required={true}
+                                        />
+                                    </div>
                                 </div>
-                                <button onClick={this.login}>
-                                    Login
-                                </button>
-                                {this.state.errorMsg ? <span className="error">{this.state.errorMsg}</span> : null}
+                                <div className="row justify-content-center">
+                                    <button className="btn btn-success" onClick={this.login}
+                                            disabled={this.state.disableLoginBtn}>
+                                        Login
+                                    </button>
+                                </div>
+                                <div className="row justify-content-center pt-2">
+                                    {this.state.errorMsg ? <div className="error">{this.state.errorMsg}</div> : null}
+                                </div>
                             </form>
                         </div>
                     </div>

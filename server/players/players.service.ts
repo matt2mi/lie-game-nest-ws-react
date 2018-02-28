@@ -69,16 +69,12 @@ export class PlayersService {
         return this.liesMap.get(lieValue);
     }
 
-    setInAnswersMap(lieValue: string, pseudos: string[]) {
-        this.answersMap.set(lieValue, pseudos);
-    }
-
-    addPseudoInAnswersMap(lieValue: string, pseudo: string) {
-        this.answersMap.get(lieValue).push(pseudo);
-    }
-
-    getAnswersMap(): Map<string, string[]> {
-        return this.answersMap;
+    setPseudoInAnswersMap(lieValue: string, pseudo: string) {
+        if (this.answersMap.get(lieValue)) {
+            this.answersMap.get(lieValue).push(pseudo);
+        } else {
+            this.answersMap.set(lieValue, [pseudo]);
+        }
     }
 
     addPlayer(socketClient: any, pseudo: string) {
