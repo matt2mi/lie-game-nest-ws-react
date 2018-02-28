@@ -6,7 +6,7 @@ export interface StoreState {
 }
 
 export interface Lie {
-    pseudo: string;
+    pseudos: string[];
     lieValue: string;
 }
 
@@ -19,7 +19,7 @@ export interface Question {
 export interface Result {
     id: number;
     lieValue: string;
-    liarPseudo: string;
+    liarPseudos: string[];
     playerPseudo: string;
 }
 

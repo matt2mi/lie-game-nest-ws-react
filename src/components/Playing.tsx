@@ -98,7 +98,7 @@ export default class Playing extends React.Component<Props, State> {
         this.socket.emit('lieChoosen', {
             lie: {
                 value: lie.lieValue,
-                pseudo: lie.pseudo
+                pseudos: lie.pseudos
             },
             pseudo: this.props.pseudo
         });
@@ -142,9 +142,9 @@ export default class Playing extends React.Component<Props, State> {
                                 <div className="col">
                                     Choisis la bonne réponse :
                                 </div>
-                                {this.state.lies.map(lie => {
-                                    if (lie.pseudo !== this.state.currentPseudo) {
-                                        return (<div className="col" key={lie.pseudo}>
+                                {this.state.lies.map((lie, id) => {
+                                    if (!lie.pseudos.some(pseudo => pseudo === this.state.currentPseudo)) {
+                                        return (<div className="col" key={id}>
                                             <button
                                                 type="button"
                                                 className="btn btn-primary"

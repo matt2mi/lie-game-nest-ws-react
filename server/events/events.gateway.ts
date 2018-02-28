@@ -46,19 +46,20 @@ export class EventsGateway {
 
     @SubscribeMessage('lieAnswered')
     lieAnswered(socketClient, {lieValue, pseudo}): void {
-        this.playersService.setInLiesMap(socketClient, lieValue, pseudo);
-        console.log('lie received', lieValue, 'from', pseudo);
-        if (this.playersService.getLiesMapSize() === this.playersService.players.length) {
-            this.playersService.setInLiesMap(socketClient, this.questionsService.getAnswers()[0], 'truth');
-            this.playersService.setInLiesMap(socketClient, this.questionsService.getLies()[0], 'gameLie');
-            console.log('all lies sent');
+        console.log('lie', lieValue, 'received from', pseudo);
+        this.playersService.setPseudoInLiesMap(lieValue, pseudo);
+        this.nbAnswers++;
+        if (this.nbAnswers === this.playersService.players.length) {
+            this.nbAnswers = 0;
+            const nbGameLies = this.playersService.players.length - this.playersService.getLiesMapSize();
+            this.playersService.setPseudoInLiesMap(this.questionsService.getAnswers()[0], 'truth');
+            for (let i = 0; i <= nbGameLies; i++) {
+                this.playersService.setPseudoInLiesMap(this.questionsService.getLies()[i], 'gameLie');
+            }
+            console.log('all lies sent', this.playersService.getLiesMap().values());
             this.webSocketServer.emit(
                 'loadLies',
-                // TODO pas marché
-                PlayersService.mapToArray(
-                    this.playersService.getLiesMap(),
-                    'lieValue',
-                    'pseudo')
+                PlayersService.mapToArray(this.playersService.getLiesMap(), 'lieValue', 'pseudos')
             );
         }
     }
@@ -73,6 +74,7 @@ export class EventsGateway {
         }
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
+            this.nbAnswers = 0;
             this.webSocketServer.emit('goToResults', {
                 results: this.playersService.calculateResults(), // TODO champ liarPseudos => gestion front
                 scores: this.playersService.calculateScores(),
@@ -81,7 +83,6 @@ export class EventsGateway {
             this.playersService.endOfRound();
             this.questionsService.endOfRound();
             this.questionsService.nextQuestion();
-            this.nbAnswers = 0;
             if (this.nbRounds <= 7) {
                 setTimeout(() => {
                     this.webSocketServer.emit('nextQuestion');

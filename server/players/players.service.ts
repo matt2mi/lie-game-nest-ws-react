@@ -1,3 +1,4 @@
+/// <reference path="../../node_modules/typescript/lib/lib.es6.d.ts" />
 import { Component } from '@nestjs/common';
 import { Player } from '../types';
 
@@ -18,15 +19,20 @@ export class PlayersService {
     }
 
     // TODO TS getter => getMap(truc) return map.get(truc)
-    private playersMap: Map<any, string> = new Map(); // set(socket, pseudo)
-    private liesMap: Map<any, { pseudo: string, lieValue: string }> = new Map(); // (socketClient, {pseudo: string, lieValue: string})
-    private answersMap: Map<string, string[]> = new Map(); // (lieValue: 'mito', ['pseudo'])
-    private scoresMap: Map<string, number> = new Map(); // pseudo, score
+    // set(socket, pseudo)
+    private playersMap: Map<any, string> = new Map<any, string>();
+    // lieValue, ['pseudo1', 'pseudo2']
+    private liesMap: Map<string, string[]> = new Map();
+    // (lieValue: 'mito', ['pseudo'])
+    private answersMap: Map<string, string[]> = new Map();
+    // pseudo, score
+    private scoresMap: Map<string, number> = new Map();
 
     constructor() {
         this.initAttributes();
     }
 
+    // TODO tjrs utile ?
     public static mapToArray(map: Map<any, any>, keyPropName: string, valuePropName: any) {
         const array = [];
         for (let [key, value] of Array.from(map)) {
@@ -43,11 +49,15 @@ export class PlayersService {
         return this.playersMap.get(socketClient);
     }
 
-    setInLiesMap(socket: any, lieValue: string, pseudo: string) {
-        this.liesMap.set(socket, {lieValue, pseudo});
+    setPseudoInLiesMap(lieValue: string, pseudo: string): void {
+        if (this.liesMap.get(lieValue)) {
+            this.liesMap.get(lieValue).push(pseudo);
+        } else {
+            this.liesMap.set(lieValue, [pseudo]);
+        }
     }
 
-    getLiesMap(): Map<string, string> {
+    getLiesMap(): Map<string, string[]> {
         return this.liesMap;
     }
 
@@ -56,11 +66,7 @@ export class PlayersService {
     }
 
     getLiarPseudosFromLieValue(lieValue: string): string[] {
-        const pseudos: string[] = [];
-        this.liesMap.forEach(lie => {
-            if (lie.lieValue === lieValue) pseudos.push(lie.pseudo);
-        });
-        return pseudos;
+        return this.liesMap.get(lieValue);
     }
 
     setInAnswersMap(lieValue: string, pseudos: string[]) {

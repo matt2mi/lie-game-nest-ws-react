@@ -75,20 +75,21 @@ export default class Results extends React.Component<Props, State> {
                             {this.props.results.map(res => (
                                 <div
                                     className="col m-1"
-                                    style={res.liarPseudo === 'truth' ? this.goodAnswer : this.wrongAnswer}
+                                    style={res.liarPseudos[0] === 'truth' ? this.goodAnswer : this.wrongAnswer}
                                     key={res.id}
                                 >
                                     {
-                                        res.liarPseudo === 'truth' ?
+                                        res.liarPseudos[0] === 'truth' ?
                                             res.playerPseudo + ' a choisi la bonne réponse (' + res.lieValue +
                                             ') +500 !'
                                             :
-                                            res.liarPseudo === 'gameLie' ?
+                                            res.liarPseudos[0] === 'gameLie' ?
                                                 res.playerPseudo + ' a choisi notre mito (' + res.lieValue +
                                                 ') -400 !'
                                                 :
-                                                res.playerPseudo + ' a choisi le mito de ' + res.liarPseudo +
-                                                ' (' + res.lieValue + ') +200 pour ' + res.liarPseudo
+                                                res.playerPseudo + ' a choisi le mito de ' +
+                                                res.liarPseudos.join(', ') +
+                                                ' (' + res.lieValue + ') +200 pour eux'
                                     }
                                 </div>
                             ))}
@@ -106,7 +107,7 @@ export default class Results extends React.Component<Props, State> {
                             <div className="card-block p-3">
                                 {this.props.scores.map((score, id) => (
                                     <div className="col" key={score.id}>
-                                        {id + 1 + ' - ' + score.pseudo + ' - ' + score.value}
+                                        {id + 1 + ' - ' + score.pseudo + ': ' + score.value}
                                     </div>
                                 ))}
                             </div>
