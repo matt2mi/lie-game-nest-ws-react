@@ -12,6 +12,7 @@ interface Props {
 }
 
 interface State {
+    readonly nbPlayers: number;
     readonly question: Question;
     readonly lieAnswered: string;
     readonly lies: Lie[];
@@ -20,6 +21,7 @@ interface State {
     readonly goToResults: boolean;
     readonly isGoodAnswer: boolean;
     readonly currentPseudo?: string;
+    readonly answeredPlayers: string[];
 }
 
 export default class Playing extends React.Component<Props, State> {
@@ -29,11 +31,13 @@ export default class Playing extends React.Component<Props, State> {
         super(props);
 
         this.changeValue = this.changeValue.bind(this);
-        this.loadLies = this.loadLies.bind(this);
+        this.answeredPlayers = this.answeredPlayers.bind(this);
         this.sendLie = this.sendLie.bind(this);
+        this.loadLies = this.loadLies.bind(this);
         this.chooseLie = this.chooseLie.bind(this);
 
         this.state = {
+            nbPlayers: 0,
             question: {text: '', answers: [], lies: []},
             lieAnswered: '',
             lies: [],
@@ -41,11 +45,13 @@ export default class Playing extends React.Component<Props, State> {
             displayLies: false,
             goToResults: false,
             isGoodAnswer: false,
-            currentPseudo: this.props.pseudo
+            currentPseudo: this.props.pseudo,
+            answeredPlayers: []
         };
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
+        this.socket.on('answeredPlayer', this.answeredPlayers);
     }
 
     componentWillMount() {
@@ -58,9 +64,17 @@ export default class Playing extends React.Component<Props, State> {
             .catch(e => {
                 console.error(e);
             });
+        fetch('/api/nbMaxPlayers')
+            .then(result => {
+                return result.json();
+            })
+            .then((nbPlayers: number) => this.setState({nbPlayers}))
+            .catch(e => {
+                console.error(e);
+            });
     }
 
-    changeValue(event: React.FormEvent<HTMLInputElement>) {
+    changeValue(event: React.FormEvent<HTMLInputElement>): void {
         if (this.state.question.answers.some(answer => answer === event.currentTarget.value)) {
             this.setState({
                 lieAnswered: event.currentTarget.value,
@@ -74,11 +88,11 @@ export default class Playing extends React.Component<Props, State> {
         }
     }
 
-    loadLies(lies: Lie[]) {
-        this.setState({lies, displayLies: true});
+    answeredPlayers(pseudoAnsweredPlayer: string): void {
+        this.setState({answeredPlayers: [...this.state.answeredPlayers, pseudoAnsweredPlayer]});
     }
 
-    sendLie() {
+    sendLie(): void {
         this.setState({lieSent: true});
         this.socket.on('loadLies', (lies: Lie[]) => this.loadLies(lies));
         this.socket.emit('lieAnswered', {
@@ -87,7 +101,11 @@ export default class Playing extends React.Component<Props, State> {
         });
     }
 
-    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie) {
+    loadLies(lies: Lie[]): void {
+        this.setState({lies, displayLies: true});
+    }
+
+    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie): void {
         this.setState({displayLies: false});
         e.preventDefault();
         this.socket.on('goToResults', ({results, scores, nbRounds}) => {
@@ -117,7 +135,7 @@ export default class Playing extends React.Component<Props, State> {
                     <br/>
                     <div className="row">
                         {!this.state.lieSent ?
-                            <div className="col">
+                            <div className="col-12">
                                 <form onSubmit={this.sendLie}>
                                     <div className="form-group">
                                         <label>Mensonge</label>
@@ -134,6 +152,13 @@ export default class Playing extends React.Component<Props, State> {
                                         Envoyer
                                     </button>
                                 </form>
+                                <div className="col-12">
+                                    Joueurs ayant répondu:
+                                    {' ' + this.state.answeredPlayers.length + '/' + this.state.nbPlayers}
+                                    {this.state.answeredPlayers
+                                        .map((player, id) => <div className="row" key={id}>{player}</div>)
+                                    }
+                                </div>
                             </div>
                             : null}
 
