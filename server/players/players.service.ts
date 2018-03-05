@@ -13,9 +13,13 @@ export class PlayersService {
     get players(): Player[] {
         return this._players;
     }
-
     set players(players: Player[]) {
         this._players = players;
+    }
+
+    private _playersUnanswered: string[];
+    get playersUnanswered(): string[] {
+        return this._playersUnanswered;
     }
 
     // TODO TS getter => getMap(truc) return map.get(truc)
@@ -32,7 +36,6 @@ export class PlayersService {
         this.initAttributes();
     }
 
-    // TODO tjrs utile ?
     public static mapToArray(map: Map<any, any>, keyPropName: string, valuePropName: any) {
         const array = [];
         for (let [key, value] of Array.from(map)) {
@@ -51,7 +54,7 @@ export class PlayersService {
 
     setPseudoInLiesMap(lieValue: string, pseudo: string): void {
         if (this.liesMap.get(lieValue)) {
-            this.liesMap.get(lieValue).push(pseudo);
+            this.liesMap.set(lieValue, [...this.liesMap.get(lieValue), pseudo]);
         } else {
             this.liesMap.set(lieValue, [pseudo]);
         }
@@ -75,6 +78,16 @@ export class PlayersService {
         } else {
             this.answersMap.set(lieValue, [pseudo]);
         }
+    }
+
+    getLastPlayersUnanswer(pseudo: string): number {
+        const id = this._playersUnanswered.findIndex(pl => pl === pseudo);
+        this._playersUnanswered.splice(id, 1);
+        return this._players.length - this._playersUnanswered.length;
+    }
+
+    initPlayersUnanswered() {
+        this._playersUnanswered = this._players.map(player => player.pseudo);
     }
 
     addPlayer(socketClient: any, pseudo: string) {
@@ -140,5 +153,6 @@ export class PlayersService {
         this.playersMap = new Map();
         this.liesMap = new Map();
         this.answersMap = new Map();
+        this.initPlayersUnanswered();
     }
 }

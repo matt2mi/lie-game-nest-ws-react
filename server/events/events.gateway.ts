@@ -38,6 +38,7 @@ export class EventsGateway {
                 this.webSocketServer.emit('updatePlayers', this.playersService.players);
 
                 if (this.playersService.players.length === this.playersService.maxPlayers) {
+                    this.playersService.initPlayersUnanswered();
                     this.webSocketServer.emit('players-list-full', this.playersService.players);
                 }
             }
@@ -48,7 +49,8 @@ export class EventsGateway {
     lieAnswered(socketClient, {lieValue, pseudo}): void {
         console.log('lie', lieValue, 'received from', pseudo);
         this.playersService.setPseudoInLiesMap(lieValue, pseudo);
-        this.webSocketServer.emit('answeredPlayer', pseudo);
+        this.playersService.getLastPlayersUnanswer(pseudo);
+        this.webSocketServer.emit('unansweredPlayers', this.playersService.playersUnanswered);
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
             this.nbAnswers = 0;

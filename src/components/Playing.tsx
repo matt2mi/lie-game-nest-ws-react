@@ -3,6 +3,7 @@ import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Lie, Question, Result, Score } from '../types';
+import { Player } from '../../server/types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -12,7 +13,6 @@ interface Props {
 }
 
 interface State {
-    readonly nbPlayers: number;
     readonly question: Question;
     readonly lieAnswered: string;
     readonly lies: Lie[];
@@ -21,7 +21,7 @@ interface State {
     readonly goToResults: boolean;
     readonly isGoodAnswer: boolean;
     readonly currentPseudo?: string;
-    readonly answeredPlayers: string[];
+    readonly unAnsweredPlayers: string[];
 }
 
 export default class Playing extends React.Component<Props, State> {
@@ -31,13 +31,11 @@ export default class Playing extends React.Component<Props, State> {
         super(props);
 
         this.changeValue = this.changeValue.bind(this);
-        this.answeredPlayers = this.answeredPlayers.bind(this);
         this.sendLie = this.sendLie.bind(this);
         this.loadLies = this.loadLies.bind(this);
         this.chooseLie = this.chooseLie.bind(this);
 
         this.state = {
-            nbPlayers: 0,
             question: {text: '', answers: [], lies: []},
             lieAnswered: '',
             lies: [],
@@ -46,12 +44,15 @@ export default class Playing extends React.Component<Props, State> {
             goToResults: false,
             isGoodAnswer: false,
             currentPseudo: this.props.pseudo,
-            answeredPlayers: []
+            unAnsweredPlayers: []
         };
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
-        this.socket.on('answeredPlayer', this.answeredPlayers);
+        this.socket.on('unansweredPlayers',
+            (unAnsweredPlayers: string[]) => {
+                this.setState({unAnsweredPlayers});
+            });
     }
 
     componentWillMount() {
@@ -64,11 +65,13 @@ export default class Playing extends React.Component<Props, State> {
             .catch(e => {
                 console.error(e);
             });
-        fetch('/api/nbMaxPlayers')
+        fetch('/api/players')
             .then(result => {
                 return result.json();
             })
-            .then((nbPlayers: number) => this.setState({nbPlayers}))
+            .then((players: Player[]) => this.setState(
+                {unAnsweredPlayers: players.map(player => player.pseudo)}
+            ))
             .catch(e => {
                 console.error(e);
             });
@@ -86,10 +89,6 @@ export default class Playing extends React.Component<Props, State> {
                 isGoodAnswer: false
             });
         }
-    }
-
-    answeredPlayers(pseudoAnsweredPlayer: string): void {
-        this.setState({answeredPlayers: [...this.state.answeredPlayers, pseudoAnsweredPlayer]});
     }
 
     sendLie(): void {
@@ -152,13 +151,13 @@ export default class Playing extends React.Component<Props, State> {
                                         Envoyer
                                     </button>
                                 </form>
-                                <div className="col-12">
-                                    Joueurs ayant répondu:
-                                    {' ' + this.state.answeredPlayers.length + '/' + this.state.nbPlayers}
-                                    {this.state.answeredPlayers
-                                        .map((player, id) => <div className="row" key={id}>{player}</div>)
-                                    }
-                                </div>
+                                {
+                                    this.state.unAnsweredPlayers.map(player => (
+                                        <div className="col-3">
+                                            {player}
+                                        </div>)
+                                    )
+                                }
                             </div>
                             : null}
 
