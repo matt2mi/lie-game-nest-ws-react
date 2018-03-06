@@ -10,68 +10,64 @@ export class QuestionsService {
             {
                 text: 'El colacho est un festival espagnol où les gens s\'habillent en diables et sautent au dessus de ...',
                 answers: ['bébés', 'bebes', 'bébé', 'bebe'],
-                lies: ['voitures', 'piscines']
+                lies: ['voitures', 'piscines', 'canapés', 'haies', 'chaussures']
             }, {
                 text: 'Dans la ville d\'Alliance au Nebraska, on peut voir une réplique du Stonehenge faite de ...',
                 answers: ['voiture', 'voitures'],
-                lies: ['crottes', 'patates']
-            }, {
-                text: 'l\'acteur Eddie Murphy a sorti une chanson en 1982 dont le titre est "Boogie in ..."',
-                answers: ['yout butt', 'butt'],
-                lies: ['your mother', 'USA']
+                lies: ['crottes', 'patates', 'kaplas', 'coussins', 'chaises']
             }, {
                 text: 'En vacances en chine à Dongyang, il faut absolument goûter leurs oeufs cuits dans ...',
                 answers: ['l\'urine d\'enfant', 'urine d\'enfant', 'urine enfant', 'urine'],
-                lies: ['un wok', 'du lait de panda']
+                lies: ['du liquide amniotique', 'du lait de panda', 'une sauce piment', 'du fromage', 'un wok']
             }, {
-                text: 'Nicolas Ancion a écrit un livre sur un pays imaginaires dont le titre est "Les ours n\'ont pas de ' +
+                text: 'Nicolas Ancion a écrit un livre sur un pays imaginaire dont le titre est "Les ours n\'ont pas de ' +
                 'problème de ..."',
                 answers: ['parking'],
-                lies: ['dentition', 'température']
+                lies: ['mycose', 'température', 'transit', 'fourrure', 'dentition']
             }, {
                 text: 'Zakhar Prilepine a écrit un livre de nouvelles comiques dont le titre est "Des chaussures pleines ' +
                 'de ... chaud(es)"',
                 answers: ['vodka'],
-                lies: ['pisse', 'pieds']
+                lies: ['pisse', 'boue', 'merde', 'poils', 'chocolat']
             }, {
                 text: 'Quand l\'auteur de Charlie et la chocolaterie, Roald Dahl est mort, il a été enterré avec des ' +
                 'queues de billard, du vin de Bourgogne, du chocolat, des crayons et ...',
                 answers: ['une scie électrique', 'scie'],
-                lies: ['griffe de corbeau', 'globe terrestre']
+                lies: ['sa chienne', 'un globe terrestre', 'ses chaussettes', 'une griffe de corbeau', 'des livres']
             }, {
                 text: 'Le 22 mai 2012, Lindsay Lohan a tweeté : "... est le meilleur médicament."',
                 answers: ['le travail'],
-                lies: ['la drogue', 'le sexe']
+                lies: ['la drogue', 'le sexe', 'un gosse', 'un mari', 'zouk la']
             }, {
                 text: 'Mohammed Khurshid Hussain est dans le livre des records car il arrive à ... très vite avec son nez',
-                answers: ['taper', 'taper au clavier', 'écrire'],
-                lies: ['siffler', 'souffler']
+                answers: ['taper au clavier', 'taper', 'écrire'],
+                lies: ['siffler', 'souffler', 'sniffer', 'manger', 'lire']
             }, {
                 text: 'Le New York Times a éét obligé de corriger une édition pour avoir pris Mario et Luigi (Nintendo) ' +
                 'comme ... plutôt que plombiers',
                 answers: ['concierges', 'concierge'],
-                lies: ['électriciens', 'charpentiers']
+                lies: ['électriciens', 'charpentiers', 'sportifs', 'flics', 'gardiens']
             }, {
                 text: 'La ville d\'Olney dans l\'Illinois (USA) organise un évènement annuel pour ... les écureuils',
                 answers: ['compter'],
-                lies: ['honorer', 'empailler']
+                lies: ['honorer', 'empailler', 'faire manger', 'tondre', 'observer']
             }, {
                 text: 'Dans les années 90, les profs en Corée du Nord devaient savoir à peu près comment ...',
                 answers: ['jouer de l\'accordéon'],
-                lies: ['cuisiner', 'accoucher dans l\'eau']
+                lies: ['écrire leur nom', 'cuisiner', 'accoucher dans l\'eau', 'parler anglais', 'tirer au pistolet']
             }, {
                 text: 'D\'après une étude de l\'université de Jena, on se rapelle plus facilement des gens ...',
                 answers: ['moches'],
-                lies: ['cons', 'gros']
+                lies: ['cons', 'étrangers', 'chiants', 'charmants', 'différents']
             }, {
                 text: 'La cause de la mort d\'un cascadeur pendant qu\'il traversait une rivière sur une tyrolienne avec ' +
                 'sa queue de cheval',
                 answers: ['attaque cardiaque', 'cardiaque'],
-                lies: ['scalpé', 'perte de sang']
+                lies: ['scalpé', 'perte de sang', 'froid', 'chute']
             }, {
                 text: 'Coca-Cola a, un jour, commandé un jeu vidéo sur Atari nommé "Pepsi ..."',
                 answers: ['invaders'],
-                lies: ['parade', 'problem']
+                lies: ['parade', 'sports', 'co', 'pop', 'sip']
             }
         ];
         this.currentQuestionId = Math.floor(Math.random() * this.questions.length);
