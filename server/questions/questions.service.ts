@@ -43,7 +43,7 @@ export class QuestionsService {
                 answers: ['taper au clavier', 'taper', 'écrire'],
                 lies: ['siffler', 'souffler', 'sniffer', 'manger', 'lire']
             }, {
-                text: 'Le New York Times a éét obligé de corriger une édition pour avoir pris Mario et Luigi (Nintendo) ' +
+                text: 'Le New York Times a été obligé de corriger une édition pour avoir pris Mario et Luigi (Nintendo) ' +
                 'comme ... plutôt que plombiers',
                 answers: ['concierges', 'concierge'],
                 lies: ['électriciens', 'charpentiers', 'sportifs', 'flics', 'gardiens']

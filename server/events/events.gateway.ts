@@ -18,7 +18,7 @@ export class EventsGateway {
     @SubscribeMessage('disconnect')
     disconnect(socketClient): void {
         const pseudo = this.playersService.getPseudoFromPlayersMap(socketClient);
-        if (pseudo) {
+        if (pseudo !== undefined) {
             console.log('disconnect', pseudo);
             this.playersService.deletePlayer(socketClient, pseudo);
             this.webSocketServer.emit('updatePlayers', this.playersService.players);
@@ -54,16 +54,28 @@ export class EventsGateway {
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
             this.nbAnswers = 0;
-            const nbGameLies = this.playersService.players.length - this.playersService.getLiesMapSize();
             this.playersService.setPseudoInLiesMap(this.questionsService.getAnswers()[0], 'truth');
-            for (let i = 0; i <= nbGameLies; i++) {
-                this.playersService.setPseudoInLiesMap(this.questionsService.getLies()[i], 'gameLie');
+
+            if (this.playersService.getLiesMapSize() <= this.playersService.players.length) {
+                // if same lies
+                this.setGameLies();
             }
-            console.log('all lies sent', this.playersService.getLiesMap().values());
+
+            console.log('all lies sent', this.playersService.getLiesMap());
             this.webSocketServer.emit(
                 'loadLies',
                 PlayersService.mapToArray(this.playersService.getLiesMap(), 'lieValue', 'pseudos')
             );
+        }
+    }
+
+    private setGameLies(i: number = 0): void {
+        if (this.playersService.getLiesMap().get(this.questionsService.getLies()[i]) === undefined) {
+            this.playersService.setPseudoInLiesMap(this.questionsService.getLies()[i], 'gameLie');
+        }
+        if (this.playersService.getLiesMapSize() <= this.playersService.players.length) {
+            i++;
+            this.setGameLies(i);
         }
     }
 

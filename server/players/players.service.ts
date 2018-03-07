@@ -4,7 +4,7 @@ import { Player } from '../types';
 
 @Component()
 export class PlayersService {
-    private readonly _maxPlayers = 3;
+    private readonly _maxPlayers = 2;
     get maxPlayers(): number {
         return this._maxPlayers;
     }
