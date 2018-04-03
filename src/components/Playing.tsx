@@ -25,6 +25,7 @@ interface State {
 }
 
 export default class Playing extends React.Component<Props, State> {
+
     socket: Socket;
 
     constructor(props: Props) {
@@ -49,7 +50,8 @@ export default class Playing extends React.Component<Props, State> {
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
-        this.socket.on('unansweredPlayers',
+        this.socket.on(
+            'unansweredPlayers',
             (unAnsweredPlayers: string[]) => {
                 this.setState({unAnsweredPlayers});
             });
@@ -121,6 +123,14 @@ export default class Playing extends React.Component<Props, State> {
         });
     }
 
+    private static shuffle(array: any[]): any[] {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     render() {
         if (this.state.goToResults) {
             return (<Redirect to="/results"/>);
@@ -166,7 +176,7 @@ export default class Playing extends React.Component<Props, State> {
                                 <div className="col">
                                     Choisis la bonne réponse :
                                 </div>
-                                {this.shuffle(this.state.lies).map((lie, id) => {
+                                {Playing.shuffle(this.state.lies).map((lie, id) => {
                                     if (!lie.pseudos.some(pseudo => pseudo === this.state.currentPseudo)) {
                                         return (<div className="col" key={id}>
                                             <button
@@ -186,13 +196,5 @@ export default class Playing extends React.Component<Props, State> {
                 </div>
             </div>
         );
-    }
-
-    private shuffle(array: any[]): any[] {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
     }
 }

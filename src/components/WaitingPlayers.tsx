@@ -18,6 +18,7 @@ interface State {
     readonly players: Player[];
     readonly goToPlay: boolean;
     readonly nbMaxPlayers: number;
+    readonly url: string;
 }
 
 class WaitingPlayers extends React.Component<Props, State> {
@@ -30,7 +31,14 @@ class WaitingPlayers extends React.Component<Props, State> {
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
-        this.state = {players: [], goToPlay: false, nbMaxPlayers: 0};
+
+        this.state = {
+            players: [],
+            goToPlay: false,
+            nbMaxPlayers: 0,
+            url: url.split('/waiting')[0] + '/login'
+        };
+
         this.socket.on('updatePlayers', this.onUpdatePlayers);
         this.socket.on('players-list-full', this.enoughPlayers);
     }
@@ -73,9 +81,10 @@ class WaitingPlayers extends React.Component<Props, State> {
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row">{this.props.pseudo + ' '} is waiting other players...</div>
+                    <div className="row">Partie commencée !</div>
+                    <div className="row">En attente de joueurs => {this.state.url}</div>
                     <div className="row">
-                        {this.state.players.length + '/' + this.state.nbMaxPlayers} players
+                        {this.state.players.length + '/' + this.state.nbMaxPlayers} joueurs
                     </div>
                     {this.state.players.map((player: Player) => {
                         return (<div className="row" key={player.id}>{player.pseudo}</div>);
