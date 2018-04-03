@@ -5,6 +5,7 @@ import Login from './containers/Login';
 import NavHeader from './containers/NavHeader';
 import Playing from './containers/Playing';
 import Results from './containers/Results';
+import SharedScreen from './components/SharedScreen';
 import WaitingPlayers from './components/WaitingPlayers';
 
 class App extends React.Component {
@@ -14,7 +15,8 @@ class App extends React.Component {
                 <NavHeader pseudo={''}/>
                 <div className="container mt-2">
                     <Switch>
-                        <Route path="/" exact={true} component={Login}/>
+                        <Route path="/" exact={true} component={SharedScreen}/>
+                        <Route path="/login" component={Login}/>
                         <Route path="/waiting" component={WaitingPlayers}/>
                         <Route path="/playing" component={Playing}/>
                         <Route path="/results" component={Results}/>

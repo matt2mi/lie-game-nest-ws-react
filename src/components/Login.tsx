@@ -102,8 +102,11 @@ export default class Login extends React.Component<Props, State> {
                                     </div>
                                 </div>
                                 <div className="row justify-content-center">
-                                    <button className="btn btn-success" onClick={this.login}
-                                            disabled={this.state.disableLoginBtn}>
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={this.login}
+                                        disabled={this.state.disableLoginBtn}
+                                    >
                                         Login
                                     </button>
                                 </div>
