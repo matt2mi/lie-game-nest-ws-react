@@ -35,6 +35,7 @@ export default class Playing extends React.Component<Props, State> {
         this.sendLie = this.sendLie.bind(this);
         this.loadLies = this.loadLies.bind(this);
         this.chooseLie = this.chooseLie.bind(this);
+        this.shuffleLies = this.shuffleLies.bind(this);
 
         this.state = {
             question: {text: '', answers: [], lies: []},
@@ -123,7 +124,7 @@ export default class Playing extends React.Component<Props, State> {
         });
     }
 
-    private static shuffle(array: any[]): any[] {
+    shuffleLies(array: Lie[]): Lie[] {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
@@ -176,7 +177,7 @@ export default class Playing extends React.Component<Props, State> {
                                 <div className="col">
                                     Choisis la bonne réponse :
                                 </div>
-                                {Playing.shuffle(this.state.lies).map((lie, id) => {
+                                {this.shuffleLies(this.state.lies).map((lie, id) => {
                                     if (!lie.pseudos.some(pseudo => pseudo === this.state.currentPseudo)) {
                                         return (<div className="col" key={id}>
                                             <button
