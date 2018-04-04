@@ -48,7 +48,6 @@ class WaitingPlayers extends React.Component<Props, State> {
     }
 
     enoughPlayers(players: Player[]): void {
-        console.log('players', players);
         this.setState({players, goToPlay: true});
     }
 
@@ -81,13 +80,12 @@ class WaitingPlayers extends React.Component<Props, State> {
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row">Partie commencée !</div>
                     <div className="row">En attente de joueurs => {this.state.url}</div>
                     <div className="row">
                         {this.state.players.length + '/' + this.state.nbMaxPlayers} joueurs
                     </div>
-                    {this.state.players.map((player: Player) => {
-                        return (<div className="row" key={player.id}>{player.pseudo}</div>);
+                    {this.state.players.map((player: Player, id: number) => {
+                        return (<div className="row" key={player.id}>{id + 1 + ' - ' + player.pseudo}</div>);
                     })}
                 </div>
             );

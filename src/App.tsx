@@ -5,6 +5,7 @@ import Login from './containers/Login';
 import NavHeader from './containers/NavHeader';
 import Playing from './containers/Playing';
 import Results from './containers/Results';
+import SharedPlaying from './containers/SharedPlaying';
 import SharedScreen from './components/SharedScreen';
 import WaitingPlayers from './components/WaitingPlayers';
 
@@ -18,6 +19,7 @@ class App extends React.Component {
                         <Route path="/" exact={true} component={SharedScreen}/>
                         <Route path="/login" component={Login}/>
                         <Route path="/waiting" component={WaitingPlayers}/>
+                        <Route path="/sharedPlaying" component={SharedPlaying}/>
                         <Route path="/playing" component={Playing}/>
                         <Route path="/results" component={Results}/>
                     </Switch>
