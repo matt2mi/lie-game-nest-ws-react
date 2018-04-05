@@ -16,7 +16,7 @@ export class EventsGateway {
     }
 
     @SubscribeMessage('disconnect')
-    disconnect(socketClient): void {
+    disconnect(socketClient: Object): void {
         const pseudo = this.playersService.getPseudoFromPlayersMap(socketClient);
         if (pseudo !== undefined) {
             console.log('disconnect', pseudo);
@@ -26,13 +26,14 @@ export class EventsGateway {
     }
 
     @SubscribeMessage('subscribeToApp')
-    onSubscribe(socketClient, pseudo): void {
+    onSubscribe(socketClient: Object, pseudo: string): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
             if (this.playersService.players.some((player: Player) => pseudo === player.pseudo)) {
-                const errorMsg = 'Pseudo déjà pris :/';
+                const errorMsg = 'Le pseudo ' + pseudo + ' est déjà pris :/';
                 console.log(errorMsg);
-                this.webSocketServer.emit('updatePlayers', this.playersService.players, errorMsg);
+                this.webSocketServer.emit('isConnected', errorMsg);
             } else {
+                this.webSocketServer.emit('isConnected', null);
                 this.playersService.addPlayer(socketClient, pseudo);
                 console.log(this.playersService.getPseudoFromPlayersMap(socketClient), 'connected');
                 this.webSocketServer.emit('updatePlayers', this.playersService.players);
@@ -46,11 +47,11 @@ export class EventsGateway {
     }
 
     @SubscribeMessage('lieAnswered')
-    lieAnswered(socketClient, {lieValue, pseudo}): void {
+    lieAnswered(socketClient: Object, {lieValue, pseudo}: { lieValue: string, pseudo: string }): void {
         console.log('lie', lieValue, 'received from', pseudo);
         this.playersService.setPseudoInLiesMap(lieValue, pseudo);
         this.playersService.getLastPlayersUnanswer(pseudo);
-        this.webSocketServer.emit('unansweredPlayers', this.playersService.playersUnanswered);
+        this.webSocketServer.emit('newAnswer', pseudo);
         this.nbAnswers++;
         if (this.nbAnswers === this.playersService.players.length) {
             this.nbAnswers = 0;
@@ -62,25 +63,12 @@ export class EventsGateway {
             }
 
             console.log('all lies sent', this.playersService.getLiesMap());
-            this.webSocketServer.emit(
-                'loadLies',
-                PlayersService.mapToArray(this.playersService.getLiesMap(), 'lieValue', 'pseudos')
-            );
-        }
-    }
-
-    private setGameLies(i: number = 0): void {
-        if (this.playersService.getLiesMap().get(this.questionsService.getLies()[i]) === undefined) {
-            this.playersService.setPseudoInLiesMap(this.questionsService.getLies()[i], 'gameLie');
-        }
-        if (this.playersService.getLiesMapSize() <= this.playersService.players.length) {
-            i++;
-            this.setGameLies(i);
+            this.webSocketServer.emit('goToAnswering');
         }
     }
 
     @SubscribeMessage('lieChoosen')
-    lieChoosen(socketClient, answer: Answer): void {
+    lieChoosen(socketClient: Object, answer: Answer): void {
         console.log('lie choosen by', answer.pseudo, ':', answer.lie);
         this.playersService.setPseudoInAnswersMap(answer.lie.value, answer.pseudo);
         this.nbAnswers++;
@@ -95,11 +83,23 @@ export class EventsGateway {
             this.questionsService.endOfRound();
             this.questionsService.nextQuestion();
             if (this.nbRounds <= 7) {
-                setTimeout(() => {
-                    this.webSocketServer.emit('nextQuestion');
-                    this.nbRounds++;
-                }, 10000);
+                setTimeout(
+                    () => {
+                        this.webSocketServer.emit('nextQuestion');
+                        this.nbRounds++;
+                    },
+                    10000);
             }
+        }
+    }
+
+    private setGameLies(i: number = 0): void {
+        if (this.playersService.getLiesMap().get(this.questionsService.getLies()[i]) === undefined) {
+            this.playersService.setPseudoInLiesMap(this.questionsService.getLies()[i], 'gameLie');
+        }
+        if (this.playersService.getLiesMapSize() <= this.playersService.players.length) {
+            i++;
+            this.setGameLies(i);
         }
     }
 }

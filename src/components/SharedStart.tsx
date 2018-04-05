@@ -5,26 +5,26 @@ interface Props {
 }
 
 interface State {
-    goToWaiting: boolean;
+    goToWaitingForPlayers: boolean;
 }
 
-export default class SharedScreen extends React.Component<Props, State> {
+export default class SharedStart extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
 
-        this.state = {goToWaiting: false};
+        this.state = {goToWaitingForPlayers: false};
 
         this.go = this.go.bind(this);
     }
 
     go() {
-        this.setState({goToWaiting: true});
+        this.setState({goToWaitingForPlayers: true});
     }
 
     render() {
-        if (this.state.goToWaiting) {
-            return (<Redirect to="/waiting"/>);
+        if (this.state.goToWaitingForPlayers) {
+            return (<Redirect to="/waitingForPlayers"/>);
         } else {
             return (
                 <div className="base-div-content">

@@ -21,7 +21,7 @@ interface State {
     readonly url: string;
 }
 
-class WaitingPlayers extends React.Component<Props, State> {
+class WaitingForPlayers extends React.Component<Props, State> {
     socket: Socket;
 
     constructor(props: Props) {
@@ -76,7 +76,7 @@ class WaitingPlayers extends React.Component<Props, State> {
 
     render() {
         if (this.state.goToPlay) {
-            return (<Redirect to="/playing"/>);
+            return (<Redirect to="/sharedPlaying"/>);
         } else {
             return (
                 <div className="base-div-content">
@@ -97,4 +97,4 @@ const mapStateToProps = state => ({
     pseudo: state.pseudo
 });
 
-export default connect(mapStateToProps)(WaitingPlayers);
+export default connect(mapStateToProps)(WaitingForPlayers);

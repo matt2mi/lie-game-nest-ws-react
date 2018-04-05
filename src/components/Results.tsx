@@ -30,7 +30,7 @@ export default class Results extends React.Component<Props, State> {
         super(props);
 
         this.nextQuestion = this.nextQuestion.bind(this);
-        this.startTimer = this.startTimer.bind(this);
+        this.tick = this.tick.bind(this);
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
@@ -41,16 +41,16 @@ export default class Results extends React.Component<Props, State> {
             decounter: 10,
         };
         if (this.props.nbRounds <= 8) {
-            this.startTimer();
+            this.tick();
         }
     }
 
-    startTimer() {
+    tick() {
         if (this.state.decounter > 0) {
             setTimeout(
                 () => {
                     this.setState({decounter: this.state.decounter - 1});
-                    this.startTimer();
+                    this.tick();
                 },
                 1000);
         }
@@ -62,7 +62,7 @@ export default class Results extends React.Component<Props, State> {
 
     render() {
         if (this.state.goNext) {
-            return (<Redirect to="/playing"/>);
+            return (<Redirect to="/sharedPlaying"/>);
         }
         return (
             <div className="base-div-content">

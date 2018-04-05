@@ -23,4 +23,9 @@ export class PlayersController {
         // TODO faire une suite de question
         res.json(this.questionsService.getQuestion());
     }
+
+    @Get('api/playersLies')
+    async playersLies(@Res() res) {
+        res.json(PlayersService.mapToArray(this.playersService.getLiesMap(), 'lieValue', 'pseudos'));
+    }
 }
