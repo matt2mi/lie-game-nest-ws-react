@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { createStore } from 'redux';
 import { reducer } from './reducers';
 import { StoreState } from './types';
@@ -21,10 +21,10 @@ const store = createStore<StoreState>(
 );
 
 ReactDOM.render(
-    <BrowserRouter>
+    <HashRouter>
         <Provider store={store}>
             <App/>
         </Provider>
-    </BrowserRouter>,
+    </HashRouter>,
     document.getElementById('root') as HTMLElement
 );

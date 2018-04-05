@@ -3,11 +3,12 @@ import './App.css';
 import { Route, Switch } from 'react-router';
 import Login from './containers/Login';
 import NavHeader from './containers/NavHeader';
-import Playing from './containers/Playing';
+import PlayerAnswering from './containers/PlayerAnswering';
+import PlayerLying from './containers/PlayerLying';
 import Results from './containers/Results';
 import SharedPlaying from './containers/SharedPlaying';
-import SharedScreen from './components/SharedScreen';
-import WaitingPlayers from './components/WaitingPlayers';
+import SharedStart from './components/SharedStart';
+import WaitingForPlayers from './components/WaitingForPlayers';
 
 class App extends React.Component {
     render() {
@@ -16,12 +17,16 @@ class App extends React.Component {
                 <NavHeader pseudo={''}/>
                 <div className="container mt-2">
                     <Switch>
-                        <Route path="/" exact={true} component={SharedScreen}/>
-                        <Route path="/login" component={Login}/>
-                        <Route path="/waiting" component={WaitingPlayers}/>
+                        {/* Shared screen Routes */}
+                        <Route path="/" exact={true} component={SharedStart}/>
+                        <Route path="/waitingForPlayers" component={WaitingForPlayers}/>
                         <Route path="/sharedPlaying" component={SharedPlaying}/>
-                        <Route path="/playing" component={Playing}/>
                         <Route path="/results" component={Results}/>
+
+                        {/* Player screen Routes */}
+                        <Route path="/login" component={Login}/>
+                        <Route path="/playerLying" component={PlayerLying}/>
+                        <Route path="/playerAnswering" component={PlayerAnswering}/>
                     </Switch>
                 </div>
             </div>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Question, Result, Score } from '../types';
-import { Player } from '../../server/types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -12,8 +11,9 @@ interface Props {
 
 interface State {
     readonly question: Question;
+    readonly choosingLieTime: boolean;
     readonly goToResults: boolean;
-    readonly unAnsweredPlayers: string[];
+    readonly answeredPlayers: string[];
 }
 
 export default class SharedPlaying extends React.Component<Props, State> {
@@ -25,17 +25,28 @@ export default class SharedPlaying extends React.Component<Props, State> {
 
         this.state = {
             question: {text: '', answers: [], lies: []},
+            choosingLieTime: false,
             goToResults: false,
-            unAnsweredPlayers: []
+            answeredPlayers: []
         };
 
         const url = window.location.href;
         this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
         this.socket.on(
-            'unansweredPlayers',
-            (unAnsweredPlayers: string[]) => {
-                this.setState({unAnsweredPlayers});
+            'newAnswer',
+            (pseudoAnswered: string) => {
+                this.setState({answeredPlayers: this.state.answeredPlayers.concat(pseudoAnswered)});
             });
+        this.socket.on(
+            'loadLies',
+            () => {
+                this.setState({choosingLieTime: true, answeredPlayers: []});
+            });
+        this.socket.on('goToResults', ({results, scores, nbRounds}) => {
+            this.props.setResultsAndScores(results, scores);
+            this.props.setNbRounds(nbRounds);
+            this.setState({goToResults: true});
+        });
     }
 
     componentWillMount() {
@@ -45,16 +56,6 @@ export default class SharedPlaying extends React.Component<Props, State> {
                 const trueQuestion: Question = {text: question.text, answers: question.answers, lies: question.lies};
                 this.setState({question: trueQuestion});
             })
-            .catch(e => {
-                console.error(e);
-            });
-        fetch('/api/players')
-            .then(result => {
-                return result.json();
-            })
-            .then((players: Player[]) => this.setState(
-                {unAnsweredPlayers: players.map(player => player.pseudo)}
-            ))
             .catch(e => {
                 console.error(e);
             });
@@ -74,10 +75,16 @@ export default class SharedPlaying extends React.Component<Props, State> {
                     </div>
                     <br/>
                     <div className="row">
-                        <div className="col-12">On attend qui ...</div>
+                        {
+                            !this.state.choosingLieTime && <div className="col-12">On écrit son mito...</div>
+                        }
+                        {
+                            this.state.choosingLieTime &&
+                            <div className="col-12">et maintenant on choisit la bonne réponse !</div>
+                        }
                         <div className="col-12">
                             {
-                                this.state.unAnsweredPlayers.map(player => (
+                                this.state.answeredPlayers.map(player => (
                                     <div className="col-3">
                                         {player}
                                     </div>)

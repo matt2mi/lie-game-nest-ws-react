@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Collapse, Nav, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
+import { Navbar, NavbarBrand } from 'reactstrap';
 
 interface Props {
     readonly pseudo: string;
@@ -31,15 +31,7 @@ export default class NavHeader extends React.Component<Props, State> {
         return (
             <div>
                 <Navbar color="faded" light={true} expand="md" fixed="top">
-                    <NavbarBrand href="/">Lie Game</NavbarBrand>
-                    <NavbarToggler onClick={this.toggle}/>
-                    <Collapse isOpen={this.state.isOpen} navbar={true}>
-                        <Nav navbar={true}>
-                            <NavItem>
-                                <NavLink href="/" onClick={this.toggle}>{this.props.pseudo}</NavLink>
-                            </NavItem>
-                        </Nav>
-                    </Collapse>
+                    <NavbarBrand href="/">Lie Game - {this.props.pseudo}</NavbarBrand>
                 </Navbar>
             </div>
         );
