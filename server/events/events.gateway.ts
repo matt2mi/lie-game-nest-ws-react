@@ -72,6 +72,7 @@ export class EventsGateway {
         console.log('lie choosen by', answer.pseudo, ':', answer.lie);
         this.playersService.setPseudoInAnswersMap(answer.lie.value, answer.pseudo);
         this.nbAnswers++;
+        this.webSocketServer.emit('newAnswer', answer.pseudo);
         if (this.nbAnswers === this.playersService.players.length) {
             this.nbAnswers = 0;
             this.webSocketServer.emit('goToResults', {
@@ -89,6 +90,8 @@ export class EventsGateway {
                         this.nbRounds++;
                     },
                     10000);
+            } else {
+                this.webSocketServer.emit('gameOver');
             }
         }
     }

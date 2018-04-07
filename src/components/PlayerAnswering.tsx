@@ -2,20 +2,19 @@ import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Lie, Question, Result, Score } from '../types';
+import { Lie, Question } from '../types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
     readonly pseudo: string;
-    setResultsAndScores: (results: ReadonlyArray<Result>, scores: ReadonlyArray<Score>) => void;
-    setNbRounds: (nbRounds: number) => void;
 }
 
 interface State {
     readonly question: Question;
     readonly lies: Lie[];
     readonly waiting: boolean;
-    readonly goToResults: boolean;
+    readonly goToLying: boolean;
+    readonly gameOver: boolean;
 }
 
 export default class PlayerAnswering extends React.Component<Props, State> {
@@ -32,7 +31,8 @@ export default class PlayerAnswering extends React.Component<Props, State> {
             question: {text: '', answers: [], lies: []},
             lies: [],
             waiting: false,
-            goToResults: false
+            goToLying: false,
+            gameOver: false
         };
 
         const url = window.location.href;
@@ -61,11 +61,8 @@ export default class PlayerAnswering extends React.Component<Props, State> {
 
     chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie): void {
         e.preventDefault();
-        this.socket.on('goToResults', ({results, scores, nbRounds}) => {
-            this.props.setResultsAndScores(results, scores);
-            this.props.setNbRounds(nbRounds);
-            this.setState({goToResults: true});
-        });
+        this.socket.on('nextQuestion', () => this.setState({waiting: false, goToLying: true, gameOver: false}));
+        this.socket.on('gameOver', () => this.setState({waiting: false, goToLying: false, gameOver: true}));
         this.socket.emit('lieChoosen', {
             lie: {
                 value: lie.lieValue,
@@ -91,9 +88,14 @@ export default class PlayerAnswering extends React.Component<Props, State> {
                     <h1>Waiting...</h1>
                 </div>
             );
-        }
-        if (this.state.goToResults) {
-            return (<Redirect to="/results"/>);
+        } else if (this.state.goToLying) {
+            return (<Redirect to="/playerLying"/>);
+        } else if (this.state.gameOver) {
+            return (
+                <div className="base-div-content">
+                    <h1>Terminé !!</h1>
+                </div>
+            );
         }
         return (
             <div className="base-div-content">
