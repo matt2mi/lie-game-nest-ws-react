@@ -66,7 +66,7 @@ export default class PlayerLying extends React.Component<Props, State> {
     }
 
     sendLie(): void {
-        this.socket.on('goToAnswering', () => this.setState({goToAnswering: true}));
+        this.socket.on('goToAnswering', () => this.setState({waiting: false, goToAnswering: true}));
         this.socket.emit('lieAnswered', {
             lieValue: this.state.lieAnswered,
             pseudo: this.props.pseudo
@@ -81,8 +81,7 @@ export default class PlayerLying extends React.Component<Props, State> {
                     <h1>Waiting...</h1>
                 </div>
             );
-        }
-        if (this.state.goToAnswering) {
+        } else if (this.state.goToAnswering) {
             return (<Redirect to="playerAnswering"/>);
         }
         return (

@@ -38,7 +38,7 @@ export default class SharedPlaying extends React.Component<Props, State> {
                 this.setState({answeredPlayers: this.state.answeredPlayers.concat(pseudoAnswered)});
             });
         this.socket.on(
-            'loadLies',
+            'goToAnswering',
             () => {
                 this.setState({choosingLieTime: true, answeredPlayers: []});
             });

@@ -5,6 +5,7 @@ interface Props {
 }
 
 interface State {
+    nbPlayersExpected: number;
     goToWaitingForPlayers: boolean;
 }
 
@@ -13,9 +14,18 @@ export default class SharedStart extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        this.state = {goToWaitingForPlayers: false};
+        this.state = {
+            nbPlayersExpected: 2,
+            goToWaitingForPlayers: false
+        };
 
+        this.changeValue = this.changeValue.bind(this);
         this.go = this.go.bind(this);
+    }
+
+    changeValue(event: React.FormEvent<HTMLInputElement>) {
+        this.setState({nbPlayersExpected: parseInt(event.currentTarget.value, 10)});
+        event.preventDefault();
     }
 
     go() {
@@ -34,11 +44,23 @@ export default class SharedStart extends React.Component<Props, State> {
                                 start the party
                             </div>
                             <div className="card-block p-3">
+                                <form>
+                                    <div className="row">
+                                        <div className="form-group">
+                                            <label>Combien de joueurs ?</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                onChange={this.changeValue}
+                                                min={2}
+                                                value={this.state.nbPlayersExpected}
+                                            />
+                                        </div>
+                                    </div>
+                                </form>
+
                                 <div className="row justify-content-center">
-                                    TODO : nb joueurs fixe ou juste nb max ??
-                                </div>
-                                <div className="row justify-content-center">
-                                    <button className="btn btn-success" onClick={this.go}>Go on !</button>
+                                    <button className="btn btn-success" onClick={this.go}>Démarrer !</button>
                                 </div>
                             </div>
                         </div>
