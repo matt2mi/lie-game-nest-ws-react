@@ -29,6 +29,14 @@ export default class SharedStart extends React.Component<Props, State> {
     }
 
     go() {
+        fetch(new Request('api/nbPlayersExpected', {
+            method: 'POST',
+            body: JSON.stringify({nbPlayersExpected: this.state.nbPlayersExpected}),
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            })
+        })).catch(e => console.error(e));
+
         this.setState({goToWaitingForPlayers: true});
     }
 

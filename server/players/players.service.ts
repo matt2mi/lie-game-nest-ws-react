@@ -4,9 +4,13 @@ import { Player } from '../types';
 
 @Component()
 export class PlayersService {
-    private readonly _maxPlayers = 2;
+    private _maxPlayers: number = 2;
     get maxPlayers(): number {
         return this._maxPlayers;
+    }
+
+    setMaxPlayers(maxPls: number) {
+        this._maxPlayers = maxPls;
     }
 
     private _players: Player[];
@@ -18,9 +22,6 @@ export class PlayersService {
     }
 
     private _playersUnanswered: string[];
-    get playersUnanswered(): string[] {
-        return this._playersUnanswered;
-    }
 
     // TODO TS getter => getMap(truc) return map.get(truc)
     // set(socket, pseudo)
