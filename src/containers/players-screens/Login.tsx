@@ -1,6 +1,6 @@
-import Login from '../components/Login';
-import { PseudoAction, setPseudo } from '../actions';
-import { StoreState } from '../types';
+import Login from '../../components/players-screens/Login';
+import { PseudoAction, setPseudo } from '../../actions';
+import { StoreState } from '../../types';
 import { connect, Dispatch } from 'react-redux';
 
 const mapStateToProps = ({pseudo = ''}: StoreState) => {

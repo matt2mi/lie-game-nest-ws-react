@@ -2,7 +2,9 @@ import * as React from 'react';
 import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Lie, Question } from '../types';
+import { Lie, Question } from '../../types';
+import Waiting from './Waiting';
+import GameOver from './GameOver';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -83,19 +85,11 @@ export default class PlayerAnswering extends React.Component<Props, State> {
 
     render() {
         if (this.state.waiting) {
-            return (
-                <div className="base-div-content">
-                    <h1>Waiting...</h1>
-                </div>
-            );
+            return (<Waiting/>);
         } else if (this.state.goToLying) {
             return (<Redirect to="/playerLying"/>);
         } else if (this.state.gameOver) {
-            return (
-                <div className="base-div-content">
-                    <h1>Terminé !!</h1>
-                </div>
-            );
+            return (<GameOver/>);
         }
         return (
             <div className="base-div-content">
@@ -109,9 +103,10 @@ export default class PlayerAnswering extends React.Component<Props, State> {
                             <div className="col">
                                 Trouve la bonne réponse :
                             </div>
-                            {this.state.lies.map((lie, id) => {
-                                if (!lie.pseudos.some(pseudo => pseudo === this.props.pseudo)) {
-                                    return (<div className="col" key={id}>
+                            {this.state.lies
+                                .filter(lie => !lie.pseudos.some(pseudo => pseudo === this.props.pseudo))
+                                .map((lie, id) => (
+                                    <div className="col" key={id}>
                                         <button
                                             type="button"
                                             className="btn btn-primary"
@@ -119,10 +114,8 @@ export default class PlayerAnswering extends React.Component<Props, State> {
                                         >
                                             {lie.lieValue}
                                         </button>
-                                    </div>);
-                                }
-                                return null;
-                            })}
+                                    </div>))
+                            }
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Result, Score } from '../types';
+import { Result, Score } from '../../types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -16,7 +16,7 @@ interface State {
     readonly decounter: number;
 }
 
-export default class Results extends React.Component<Props, State> {
+export default class SharedResults extends React.Component<Props, State> {
 
     wrongAnswer = {
         border: '1px solid red'
@@ -62,7 +62,7 @@ export default class Results extends React.Component<Props, State> {
 
     render() {
         if (this.state.goNext) {
-            return (<Redirect to="/sharedPlaying"/>);
+            return (<Redirect to="/playing"/>);
         }
         return (
             <div className="base-div-content">

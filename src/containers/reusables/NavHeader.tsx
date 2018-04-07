@@ -1,5 +1,5 @@
-import NavHeader from '../components/NavHeader';
-import { StoreState } from '../types';
+import NavHeader from '../../components/reusables/NavHeader';
+import { StoreState } from '../../types';
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state: StoreState) => {

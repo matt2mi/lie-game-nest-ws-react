@@ -29,9 +29,7 @@ export class EventsGateway {
     onSubscribe(socketClient: Object, pseudo: string): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
             if (this.playersService.players.some((player: Player) => pseudo === player.pseudo)) {
-                const errorMsg = 'Le pseudo ' + pseudo + ' est déjà pris :/';
-                console.log(errorMsg);
-                this.webSocketServer.emit('isConnected', errorMsg);
+                this.webSocketServer.emit('isConnected', 'Le pseudo ' + pseudo + ' est déjà pris :/');
             } else {
                 this.webSocketServer.emit('isConnected', null);
                 this.playersService.addPlayer(socketClient, pseudo);
@@ -43,6 +41,8 @@ export class EventsGateway {
                     this.webSocketServer.emit('players-list-full', this.playersService.players);
                 }
             }
+        } else {
+            this.webSocketServer.emit('isConnected', 'Trop tard, déso !');
         }
     }
 

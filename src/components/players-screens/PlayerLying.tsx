@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Question } from '../types';
+import { Question } from '../../types';
+import Waiting from './Waiting';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -75,14 +76,10 @@ export default class PlayerLying extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.state.waiting) {
-            return (
-                <div className="base-div-content">
-                    <h1>Waiting...</h1>
-                </div>
-            );
-        } else if (this.state.goToAnswering) {
+        if (this.state.goToAnswering) {
             return (<Redirect to="playerAnswering"/>);
+        } else if (this.state.waiting) {
+            return (<Waiting/>);
         }
         return (
             <div className="base-div-content">

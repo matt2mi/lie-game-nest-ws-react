@@ -1,5 +1,5 @@
-import Results from '../components/Results';
-import { StoreState } from '../types';
+import SharedResults from '../../components/shared-screen/SharedResults';
+import { StoreState } from '../../types';
 import { connect } from 'react-redux';
 
 const mapStateToProps = (state: StoreState) => {
@@ -11,4 +11,4 @@ const mapStateToProps = (state: StoreState) => {
     };
 };
 
-export default connect(mapStateToProps, null)(Results);
+export default connect(mapStateToProps, null)(SharedResults);

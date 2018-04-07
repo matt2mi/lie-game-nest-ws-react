@@ -1,11 +1,6 @@
-import Playing from '../components/Playing';
-import { StoreState } from '../types';
+import SharedPlaying from '../../components/shared-screen/SharedPlaying';
 import { connect, Dispatch } from 'react-redux';
-import { PseudoAction, setNbRounds, setResultsAndScores } from '../actions';
-
-const mapStateToProps = ({pseudo = ''}: StoreState) => {
-    return {pseudo};
-};
+import { PseudoAction, setNbRounds, setResultsAndScores } from '../../actions';
 
 const mapDispatchToProps = (dispatch: Dispatch<PseudoAction>) => {
     return {
@@ -18,4 +13,4 @@ const mapDispatchToProps = (dispatch: Dispatch<PseudoAction>) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Playing);
+export default connect(null, mapDispatchToProps)(SharedPlaying);

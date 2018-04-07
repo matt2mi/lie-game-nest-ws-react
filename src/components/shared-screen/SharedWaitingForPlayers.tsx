@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Promise } from 'es6-promise';
-import { connect } from 'react-redux';
 import Socket = SocketIOClient.Socket;
 
 interface Player {
@@ -21,7 +20,7 @@ interface State {
     readonly url: string;
 }
 
-class WaitingForPlayers extends React.Component<Props, State> {
+export default class SharedWaitingForPlayers extends React.Component<Props, State> {
     socket: Socket;
 
     constructor(props: Props) {
@@ -76,7 +75,7 @@ class WaitingForPlayers extends React.Component<Props, State> {
 
     render() {
         if (this.state.goToPlay) {
-            return (<Redirect to="/sharedPlaying"/>);
+            return (<Redirect to="/playing"/>);
         } else {
             return (
                 <div className="base-div-content">
@@ -92,9 +91,3 @@ class WaitingForPlayers extends React.Component<Props, State> {
         }
     }
 }
-
-const mapStateToProps = state => ({
-    pseudo: state.pseudo
-});
-
-export default connect(mapStateToProps)(WaitingForPlayers);

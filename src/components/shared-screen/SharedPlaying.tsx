@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Question, Result, Score } from '../types';
+import { Question, Result, Score } from '../../types';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
