@@ -3,7 +3,7 @@ import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/map';
 import { PlayersService } from '../players/players.service';
 import { QuestionsService } from '../questions/questions.service';
-import { Answer, Player } from '../types';
+import { Answer, Player, Socket } from '../types';
 
 @WebSocketGateway({port: 3001})
 export class EventsGateway {
@@ -16,7 +16,7 @@ export class EventsGateway {
     }
 
     @SubscribeMessage('disconnect')
-    disconnect(socketClient: Object): void {
+    disconnect(socketClient: Socket): void {
         const pseudo = this.playersService.getPseudoFromPlayersMap(socketClient);
         if (pseudo !== undefined) {
             console.log('disconnect', pseudo);
@@ -25,13 +25,19 @@ export class EventsGateway {
         }
     }
 
+    @SubscribeMessage('sharedScreenSubscribeToApp')
+    onSharedScreenSubscribe(socketClient: Socket, nbPlayersExpected: number): void {
+        this.playersService.setMaxPlayers(nbPlayersExpected);
+        socketClient.emit('sharedScreenConnected');
+    }
+
     @SubscribeMessage('subscribeToApp')
-    onSubscribe(socketClient: Object, pseudo: string): void {
+    onSubscribe(socketClient: Socket, pseudo: string): void {
         if (this.playersService.players.length < this.playersService.maxPlayers) {
             if (this.playersService.players.some((player: Player) => pseudo === player.pseudo)) {
-                this.webSocketServer.emit('isConnected', 'Le pseudo ' + pseudo + ' est déjà pris :/');
+                socketClient.emit('isConnected', 'Le pseudo ' + pseudo + ' est déjà pris :/');
             } else {
-                this.webSocketServer.emit('isConnected', null);
+                socketClient.emit('isConnected', null);
                 this.playersService.addPlayer(socketClient, pseudo);
                 console.log(this.playersService.getPseudoFromPlayersMap(socketClient), 'connected');
                 this.webSocketServer.emit('updatePlayers', this.playersService.players);
@@ -42,12 +48,12 @@ export class EventsGateway {
                 }
             }
         } else {
-            this.webSocketServer.emit('isConnected', 'Trop tard, déso !');
+            socketClient.emit('isConnected', 'Trop tard, déso !');
         }
     }
 
     @SubscribeMessage('lieAnswered')
-    lieAnswered(socketClient: Object, {lieValue, pseudo}: { lieValue: string, pseudo: string }): void {
+    lieAnswered(socketClient: Socket, {lieValue, pseudo}: { lieValue: string, pseudo: string }): void {
         console.log('lie', lieValue, 'received from', pseudo);
         this.playersService.setPseudoInLiesMap(lieValue, pseudo);
         this.playersService.getLastPlayersUnanswer(pseudo);
@@ -68,7 +74,7 @@ export class EventsGateway {
     }
 
     @SubscribeMessage('lieChoosen')
-    lieChoosen(socketClient: Object, answer: Answer): void {
+    lieChoosen(socketClient: Socket, answer: Answer): void {
         console.log('lie choosen by', answer.pseudo, ':', answer.lie);
         this.playersService.setPseudoInAnswersMap(answer.lie.value, answer.pseudo);
         this.nbAnswers++;

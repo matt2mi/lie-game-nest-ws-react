@@ -36,7 +36,7 @@ export default class Login extends React.Component<Props, State> {
 
         this.socket.on('isConnected', (errorMsg: string) => {
             if (errorMsg) {
-                this.setState({errorMsg: 'Pseudo déjà pris :/', disableLoginBtn: true});
+                this.setState({errorMsg, disableLoginBtn: true});
             } else {
                 this.props.setPseudo(this.state.pseudo);
                 this.setState({connected: true});
@@ -110,7 +110,6 @@ export default class Login extends React.Component<Props, State> {
                                     </div>
                                     <div className="row justify-content-center pt-2">
                                         {this.state.errorMsg ? <div className="error">{this.state.errorMsg}</div> : null}
-                                        {this.state.connected ? <div>Connecté ! Attente de joueurs...</div> : null}
                                     </div>
                                 </form>
                             </div>

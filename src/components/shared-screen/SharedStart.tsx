@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Redirect } from 'react-router';
+import * as io from 'socket.io-client';
+import Socket = SocketIOClient.Socket;
 
 interface Props {
 }
@@ -10,17 +12,21 @@ interface State {
 }
 
 export default class SharedStart extends React.Component<Props, State> {
+    socket: Socket;
 
     constructor(props: Props) {
         super(props);
+
+        this.changeValue = this.changeValue.bind(this);
+        this.go = this.go.bind(this);
+
+        const url = window.location.href;
+        this.socket = io.connect('http://' + url.slice(7, url.length).split(':')[0] + ':3001');
 
         this.state = {
             nbPlayersExpected: 2,
             goToWaitingForPlayers: false
         };
-
-        this.changeValue = this.changeValue.bind(this);
-        this.go = this.go.bind(this);
     }
 
     changeValue(event: React.FormEvent<HTMLInputElement>) {
@@ -29,15 +35,8 @@ export default class SharedStart extends React.Component<Props, State> {
     }
 
     go() {
-        fetch(new Request('api/nbPlayersExpected', {
-            method: 'POST',
-            body: JSON.stringify({nbPlayersExpected: this.state.nbPlayersExpected}),
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        })).catch(e => console.error(e));
-
-        this.setState({goToWaitingForPlayers: true});
+        this.socket.on('sharedScreenConnected', () => this.setState({goToWaitingForPlayers: true}));
+        this.socket.emit('sharedScreenSubscribeToApp', this.state.nbPlayersExpected);
     }
 
     render() {

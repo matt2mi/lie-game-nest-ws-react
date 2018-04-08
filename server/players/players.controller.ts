@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 import { PlayersService } from './players.service';
 import { QuestionsService } from '../questions/questions.service';
 
@@ -27,11 +27,5 @@ export class PlayersController {
     @Get('api/playersLies')
     async playersLies(@Res() res) {
         res.json(PlayersService.mapToArray(this.playersService.getLiesMap(), 'lieValue', 'pseudos'));
-    }
-
-    @Post('api/nbPlayersExpected')
-    async post(@Body() body, @Res() res) {
-        this.playersService.setMaxPlayers(body.nbPlayersExpected);
-        res.status(201).send();
     }
 }

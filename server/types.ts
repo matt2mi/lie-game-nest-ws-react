@@ -18,3 +18,7 @@ export type Player = {
     id: number;
     pseudo: string;
 }
+
+export type Socket = {
+    emit: (emitMessage: string, emitData?: any) => void;
+}
