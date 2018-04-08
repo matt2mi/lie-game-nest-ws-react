@@ -61,6 +61,7 @@ export default class SharedStart extends React.Component<Props, State> {
                                                 className="form-control"
                                                 onChange={this.changeValue}
                                                 min={2}
+                                                max={8}
                                                 value={this.state.nbPlayersExpected}
                                             />
                                         </div>
