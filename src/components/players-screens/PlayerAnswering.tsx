@@ -36,7 +36,7 @@ export default class PlayerAnswering extends React.Component<Props, State> {
             lies: [],
             waiting: false,
             goToLying: false,
-            gameOver: true,
+            gameOver: false,
             rank: 0,
             total: 0
         };

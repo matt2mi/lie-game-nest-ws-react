@@ -14,6 +14,7 @@ interface State {
     readonly choosingLieTime: boolean;
     readonly goToResults: boolean;
     readonly answeredPlayers: string[];
+    readonly nbMaxPlayers: number;
 }
 
 export default class SharedPlaying extends React.Component<Props, State> {
@@ -27,7 +28,8 @@ export default class SharedPlaying extends React.Component<Props, State> {
             question: {text: '', answers: [], lies: []},
             choosingLieTime: false,
             goToResults: false,
-            answeredPlayers: []
+            answeredPlayers: [],
+            nbMaxPlayers: 0
         };
 
         const url = window.location.href;
@@ -49,16 +51,18 @@ export default class SharedPlaying extends React.Component<Props, State> {
         });
     }
 
-    componentWillMount() {
+    componentDidMount() {
         fetch('/api/question')
             .then(result => result.json())
             .then((question: Question) => {
                 const trueQuestion: Question = {text: question.text, answers: question.answers, lies: question.lies};
                 this.setState({question: trueQuestion});
             })
-            .catch(e => {
-                console.error(e);
-            });
+            .catch(e => console.error(e));
+        fetch('/api/nbMaxPlayers')
+            .then(result => result.json())
+            .then((nbMaxPlayers: number) => this.setState({nbMaxPlayers}))
+            .catch(e => console.error(e));
     }
 
     render() {
@@ -67,29 +71,38 @@ export default class SharedPlaying extends React.Component<Props, State> {
         }
         return (
             <div className="base-div-content">
-                <div className="card">
-                    <div className="row">
-                        <div className="col-12">
-                            <h1>{this.state.question.text}</h1>
-                        </div>
-                    </div>
-                    <br/>
-                    <div className="row">
-                        {
-                            !this.state.choosingLieTime && <div className="col-12">On écrit son mito...</div>
-                        }
-                        {
-                            this.state.choosingLieTime &&
-                            <div className="col-12">et maintenant on choisit la bonne réponse !</div>
-                        }
-                        <div className="col-12">
-                            {
-                                this.state.answeredPlayers.map(player => (
-                                    <div className="col-3">
-                                        {player}
-                                    </div>)
-                                )
-                            }
+                <div className="row justify-content-center">
+                    <div className="col-sm-10">
+
+                        <div className="card my-3">
+                            <div className="card-header card-header-title">
+                                <div>Question</div>
+                            </div>
+                            <div className="card-body">
+                                <h1>{this.state.question.text}</h1>
+                                <br/>
+                                {
+                                    !this.state.choosingLieTime &&
+                                    <div className="row">On écrit son mito...</div>
+                                }
+                                {
+                                    this.state.choosingLieTime &&
+                                    <div className="row">et maintenant on choisit la bonne réponse !</div>
+                                }
+                                <br/>
+                                <div className="row justify-content-center">
+                                    {this.state.answeredPlayers.length + '/' + this.state.nbMaxPlayers} joueurs
+                                </div>
+                                <div className="row d-flex justify-content-around">
+                                    {this.state.answeredPlayers.map((pseudo: string, id: number) => {
+                                        return (
+                                            <div key={id} className="col-sm-5 col-md-3 chips-pseudo">
+                                                {pseudo}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
