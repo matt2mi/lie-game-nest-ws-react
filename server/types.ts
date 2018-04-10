@@ -22,3 +22,8 @@ export type Player = {
 export type Socket = {
     emit: (emitMessage: string, emitData?: any) => void;
 }
+
+export type Rank = {
+    pseudo: string;
+    value: number;
+}

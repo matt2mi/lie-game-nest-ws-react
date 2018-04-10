@@ -55,7 +55,7 @@ export default class Login extends React.Component<Props, State> {
         this.setState({
             errorMsg: null,
             disableLoginBtn: false,
-            pseudo: event.currentTarget.value
+            pseudo: event.currentTarget.value.split(' ').join('')
         });
         event.preventDefault();
     }
@@ -81,37 +81,41 @@ export default class Login extends React.Component<Props, State> {
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row mt-3 justify-content-center">
-                        <div className="card">
-                            <div className="card-header">
-                                Login
-                            </div>
-                            <div className="card-block p-3">
-                                <form>
-                                    <div className="row">
-                                        <div className="form-group">
-                                            <label>Pseudo</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                onChange={this.changeValue}
-                                                required={true}
-                                            />
+                    <div className="row justify-content-center">
+                        <div className="col-sm-10 col-md-6 col-lg-4">
+                            <div className="card">
+                                <div className="card-header card-header-title">
+                                    Login
+                                </div>
+                                <div className="card-body p-3">
+                                    <form>
+                                        <div className="row justify-content-center">
+                                            <div className="form-group">
+                                                <label>Pseudo</label>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    onChange={this.changeValue}
+                                                    required={true}
+                                                    value={this.state.pseudo}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="row justify-content-center">
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={this.login}
-                                            disabled={this.state.disableLoginBtn}
-                                        >
-                                            Login
-                                        </button>
-                                    </div>
-                                    <div className="row justify-content-center pt-2">
-                                        {this.state.errorMsg ? <div className="error">{this.state.errorMsg}</div> : null}
-                                    </div>
-                                </form>
+                                        <div className="row justify-content-center">
+                                            <button
+                                                className="btn btn-success"
+                                                onClick={this.login}
+                                                disabled={this.state.disableLoginBtn}
+                                            >
+                                                Login
+                                            </button>
+                                        </div>
+                                        <div className="row justify-content-center pt-2">
+                                            {this.state.errorMsg ?
+                                                <div className="error">{this.state.errorMsg}</div> : null}
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

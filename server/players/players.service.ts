@@ -1,6 +1,7 @@
 /// <reference path="../../node_modules/typescript/lib/lib.es6.d.ts" />
 import { Component } from '@nestjs/common';
-import { Player } from '../types';
+import { Player, Rank } from '../types';
+import { Score } from '../../src/types';
 
 @Component()
 export class PlayersService {
@@ -148,6 +149,20 @@ export class PlayersService {
         }
 
         return PlayersService.mapToArray(this.scoresMap, 'pseudo', 'value');
+    }
+
+    calculateRanks(): Rank[] {
+        return PlayersService.mapToArray(this.scoresMap, 'pseudo', 'value')
+            .sort((score1: number, score2: number) => {
+                if (score1 > score2) {
+                    return -1;
+                }
+                if (score1 < score2) {
+                    return 1;
+                }
+                return 0;
+            })
+            .map((sorted: Score, id: number) => ({pseudo: sorted.pseudo, value: id + 1}));
     }
 
     endOfRound() {

@@ -45,30 +45,32 @@ export default class SharedStart extends React.Component<Props, State> {
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row mt-3 justify-content-center">
-                        <div className="card">
-                            <div className="card-header">
-                                start the party
-                            </div>
-                            <div className="card-block p-3">
-                                <form>
-                                    <div className="row">
-                                        <div className="form-group">
-                                            <label>Combien de joueurs ?</label>
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                onChange={this.changeValue}
-                                                min={2}
-                                                max={8}
-                                                value={this.state.nbPlayersExpected}
-                                            />
+                    <div className="row justify-content-center">
+                        <div className="col-sm-10">
+                            <div className="card">
+                                <div className="card-header card-header-title">
+                                    Démarrer la partie
+                                </div>
+                                <div className="card-body">
+                                    <form>
+                                        <div className="row justify-content-center">
+                                            <div className="form-group">
+                                                <label>Combien de joueurs ?</label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    onChange={this.changeValue}
+                                                    min={2}
+                                                    max={8}
+                                                    value={this.state.nbPlayersExpected}
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
 
-                                <div className="row justify-content-center">
-                                    <button className="btn btn-success" onClick={this.go}>Démarrer !</button>
+                                    <div className="row justify-content-center">
+                                        <button className="btn btn-success" onClick={this.go}>Go !</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

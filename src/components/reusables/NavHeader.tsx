@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap';
+import { Nav, Navbar, NavbarBrand, NavItem } from 'reactstrap';
+import NavLink from 'reactstrap/lib/NavLink';
 
 interface Props {
     readonly pseudo: string;
@@ -31,7 +32,12 @@ export default class NavHeader extends React.Component<Props, State> {
         return (
             <div>
                 <Navbar color="faded" light={true} expand="md" fixed="top">
-                    <NavbarBrand href="/">Lie Game - {this.props.pseudo}</NavbarBrand>
+                    <NavbarBrand>Lie Game {this.props.pseudo ? ' - ' + this.props.pseudo : ''}</NavbarBrand>
+                    <Nav navbar={true}>
+                        <NavItem>
+                            <NavLink>Recommencer</NavLink>
+                        </NavItem>
+                    </Nav>
                 </Navbar>
             </div>
         );

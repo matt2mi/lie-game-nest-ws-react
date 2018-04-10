@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Question } from '../../types';
-import Waiting from './Waiting';
+import Waiting from '../reusables/Waiting';
+import TimerProgress from '../reusables/TimerProgress';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -83,29 +84,44 @@ export default class PlayerLying extends React.Component<Props, State> {
         }
         return (
             <div className="base-div-content">
-                <div className="card">
-                    <div className="row">
-                        <div className="col">{this.state.question.text}</div>
-                    </div>
-                    <br/>
-                    <div className="row">
-                        <div className="col-12">
-                            <form onSubmit={this.sendLie}>
-                                <div className="form-group">
-                                    <label>Mensonge</label>
-                                    <input type="text" className="form-control" onChange={this.changeValue}/>
-                                    {this.state.isGoodAnswer ?
-                                        <div>Good answer ! Now, lie !</div>
-                                        : null}
-                                </div>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary"
-                                    disabled={this.state.isGoodAnswer}
-                                >
-                                    Envoyer
-                                </button>
-                            </form>
+                <div className="row justify-content-center">
+                    <div className="col-sm-10">
+                        <div className="card">
+                            <div className="card-header card-header-title">
+                                Invente un mito
+                            </div>
+                            <div className="card-body">
+                                <form onSubmit={this.sendLie}>
+                                    <div className="row">
+                                        <div className="col-12">{this.state.question.text}</div>
+                                    </div>
+                                    <br/>
+                                    <div className="row justify-content-center">
+                                        <div className="form-group">
+                                            <label>Mito :</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                onChange={this.changeValue}
+                                            />
+                                            {this.state.isGoodAnswer ?
+                                                <div>Good answer ! Now, lie !</div>
+                                                : null}
+                                        </div>
+                                    </div>
+                                    <div className="row justify-content-center">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary"
+                                            disabled={this.state.isGoodAnswer}
+                                        >
+                                            Envoyer
+                                        </button>
+                                    </div>
+                                </form>
+                                <br/>
+                                <TimerProgress counterMax={30}/>
+                            </div>
                         </div>
                     </div>
                 </div>

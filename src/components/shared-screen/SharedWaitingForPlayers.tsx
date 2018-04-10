@@ -2,12 +2,8 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Promise } from 'es6-promise';
+import { Player } from '../../types';
 import Socket = SocketIOClient.Socket;
-
-interface Player {
-    id: number;
-    pseudo: string;
-}
 
 interface Props {
     readonly pseudo: string;
@@ -79,13 +75,33 @@ export default class SharedWaitingForPlayers extends React.Component<Props, Stat
         } else {
             return (
                 <div className="base-div-content">
-                    <div className="row">En attente de joueurs => {this.state.url}</div>
-                    <div className="row">
-                        {this.state.players.length + '/' + this.state.nbMaxPlayers} joueurs
+                    <div className="row justify-content-center">
+                        <div className="col-sm-10">
+                            <div className="card">
+                                <div className="card-header card-header-title">
+                                    En attente de joueurs
+                                </div>
+                                <div className="card-body">
+                                    <div className="row justify-content-center">
+                                        <label>Connectez vous sur : {this.state.url}</label>
+                                    </div>
+
+                                    <div className="row justify-content-center">
+                                        {this.state.players.length + '/' + this.state.nbMaxPlayers} joueurs
+                                    </div>
+                                    <div className="row d-flex justify-content-around">
+                                        {this.state.players.map((player: Player, id: number) => {
+                                            return (
+                                                <div key={id} className="col-sm-5 col-md-3 chips-pseudo">
+                                                    {player.pseudo}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    {this.state.players.map((player: Player, id: number) => {
-                        return (<div className="row" key={player.id}>{id + 1 + ' - ' + player.pseudo}</div>);
-                    })}
                 </div>
             );
         }

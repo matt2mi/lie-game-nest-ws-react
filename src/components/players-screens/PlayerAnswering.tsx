@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
-import { Lie, Question } from '../../types';
-import Waiting from './Waiting';
-import GameOver from './GameOver';
+import { Lie, Question, Rank } from '../../types';
+import Waiting from '../reusables/Waiting';
+import GameOver from '../reusables/GameOver';
+import TimerProgress from '../reusables/TimerProgress';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -17,6 +17,8 @@ interface State {
     readonly waiting: boolean;
     readonly goToLying: boolean;
     readonly gameOver: boolean;
+    readonly rank: number;
+    readonly total: number;
 }
 
 export default class PlayerAnswering extends React.Component<Props, State> {
@@ -34,7 +36,9 @@ export default class PlayerAnswering extends React.Component<Props, State> {
             lies: [],
             waiting: false,
             goToLying: false,
-            gameOver: false
+            gameOver: true,
+            rank: 0,
+            total: 0
         };
 
         const url = window.location.href;
@@ -61,10 +65,15 @@ export default class PlayerAnswering extends React.Component<Props, State> {
             });
     }
 
-    chooseLie(e: SyntheticEvent<HTMLButtonElement>, lie: Lie): void {
-        e.preventDefault();
+    chooseLie(lie: Lie): void {
         this.socket.on('nextQuestion', () => this.setState({waiting: false, goToLying: true, gameOver: false}));
-        this.socket.on('gameOver', () => this.setState({waiting: false, goToLying: false, gameOver: true}));
+        this.socket.on('gameOver', (ranks: Rank[]) => {
+            const rank: number = ranks.filter((rank: Rank) => rank.pseudo === this.props.pseudo)[0].value;
+            this.setState({
+                rank,
+                total: ranks.length
+            });
+        });
         this.socket.emit('lieChoosen', {
             lie: {
                 value: lie.lieValue,
@@ -89,33 +98,37 @@ export default class PlayerAnswering extends React.Component<Props, State> {
         } else if (this.state.goToLying) {
             return (<Redirect to="/playerLying"/>);
         } else if (this.state.gameOver) {
-            return (<GameOver/>);
+            return (<GameOver rank={this.state.rank} total={this.state.total}/>);
         }
         return (
             <div className="base-div-content">
-                <div className="card">
-                    <div className="row">
-                        <div className="col">{this.state.question.text}</div>
-                    </div>
-                    <br/>
-                    <div className="row">
-                        <div>
-                            <div className="col">
-                                Trouve la bonne réponse :
+                <div className="row justify-content-center">
+                    <div className="col-sm-10">
+                        <div className="card">
+                            <div className="card-header card-header-title">
+                                Trouve la bonne réponse
                             </div>
-                            {this.state.lies
-                                .filter(lie => !lie.pseudos.some(pseudo => pseudo === this.props.pseudo))
-                                .map((lie, id) => (
-                                    <div className="col" key={id}>
-                                        <button
-                                            type="button"
-                                            className="btn btn-primary"
-                                            onClick={(e) => this.chooseLie(e, lie)}
-                                        >
-                                            {lie.lieValue}
-                                        </button>
-                                    </div>))
-                            }
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-12">{this.state.question.text}</div>
+                                </div>
+                                <div className="row d-flex justify-content-around">
+                                    {this.state.lies
+                                        .filter(lie => !lie.pseudos.some(pseudo => pseudo === this.props.pseudo))
+                                        .map((lie, id) => (
+                                            <div
+                                                key={id}
+                                                className="col-sm-5 col-md-3 chips-pseudo pointer mb-3"
+                                                onClick={() => this.chooseLie(lie)}
+                                            >
+                                                {lie.lieValue}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                                <br/>
+                                <TimerProgress counterMax={30}/>
+                            </div>
                         </div>
                     </div>
                 </div>

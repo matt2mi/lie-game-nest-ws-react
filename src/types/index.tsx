@@ -28,3 +28,13 @@ export interface Score {
     pseudo: string;
     value: number;
 }
+
+export interface Player {
+    id: number;
+    pseudo: string;
+}
+
+export interface Rank {
+    value: number;
+    pseudo: string;
+}

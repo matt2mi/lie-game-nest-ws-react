@@ -97,7 +97,7 @@ export class EventsGateway {
                     },
                     10000);
             } else {
-                this.webSocketServer.emit('gameOver');
+                this.webSocketServer.emit('gameOver', this.playersService.calculateRanks());
             }
         }
     }
