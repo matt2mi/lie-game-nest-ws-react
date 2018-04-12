@@ -10,6 +10,7 @@ export class EventsGateway {
     @WebSocketServer() webSocketServer;
     nbAnswers = 0;
     nbRounds = 1;
+    nbMaxRounds = 2;
 
     constructor(private readonly playersService: PlayersService,
                 private readonly questionsService: QuestionsService) {
@@ -89,7 +90,7 @@ export class EventsGateway {
             this.playersService.endOfRound();
             this.questionsService.endOfRound();
             this.questionsService.nextQuestion();
-            if (this.nbRounds <= 7) {
+            if (this.nbRounds < this.nbMaxRounds) {
                 setTimeout(
                     () => {
                         this.webSocketServer.emit('nextQuestion');

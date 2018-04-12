@@ -71,7 +71,10 @@ export default class PlayerAnswering extends React.Component<Props, State> {
             const rank: number = ranks.filter((rank: Rank) => rank.pseudo === this.props.pseudo)[0].value;
             this.setState({
                 rank,
-                total: ranks.length
+                total: ranks.length,
+                waiting: false,
+                goToLying: false,
+                gameOver: true
             });
         });
         this.socket.emit('lieChoosen', {

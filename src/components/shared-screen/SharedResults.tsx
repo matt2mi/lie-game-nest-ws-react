@@ -16,6 +16,8 @@ interface State {
     readonly goNext: boolean;
 }
 
+const MAX_NB_ROUNDS = 2;
+
 export default class SharedResults extends React.Component<Props, State> {
 
     wrongAnswer = {
@@ -89,9 +91,9 @@ export default class SharedResults extends React.Component<Props, State> {
 
                         <div className="card mb-3">
                             <div className="card-header card-header-title">
-                                Scores{this.props.nbRounds >= 8 ?
-                                ' finaux' :
-                                ' - question n°' + this.props.nbRounds + ' sur 8'}
+                                Scores{this.props.nbRounds < MAX_NB_ROUNDS ?
+                                ' - question n°' + (this.props.nbRounds + 1) + ' sur 8' :
+                                ' finaux'}
                             </div>
                             <div className="card-body">
                                 {this.props.scores
@@ -115,7 +117,7 @@ export default class SharedResults extends React.Component<Props, State> {
                             </div>
                         </div>
 
-                        {this.props.nbRounds >= 8 ? null : <TimerProgress counterMax={10}/>}
+                        {this.props.nbRounds < MAX_NB_ROUNDS ? <TimerProgress counterMax={10}/> : null}
                     </div>
                 </div>
             </div>
