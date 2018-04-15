@@ -68,9 +68,8 @@ export default class PlayerAnswering extends React.Component<Props, State> {
     chooseLie(lie: Lie): void {
         this.socket.on('nextQuestion', () => this.setState({waiting: false, goToLying: true, gameOver: false}));
         this.socket.on('gameOver', (ranks: Rank[]) => {
-            const rank: number = ranks.filter((rank: Rank) => rank.pseudo === this.props.pseudo)[0].value;
             this.setState({
-                rank,
+                rank: ranks.filter((rank: Rank) => rank.pseudo === this.props.pseudo)[0].value,
                 total: ranks.length,
                 waiting: false,
                 goToLying: false,
@@ -129,11 +128,12 @@ export default class PlayerAnswering extends React.Component<Props, State> {
                                         ))
                                     }
                                 </div>
-                                <br/>
-                                <TimerProgress counterMax={30}/>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="row justify-content-center">
+                    <TimerProgress counterMax={30}/>
                 </div>
             </div>
         );

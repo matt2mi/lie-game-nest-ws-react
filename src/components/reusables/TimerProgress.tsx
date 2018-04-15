@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Progress from 'reactstrap/lib/Progress';
 
 interface Props {
     counterMax: number;
@@ -9,11 +8,17 @@ interface State {
     counter: number;
 }
 
+const stopCounterValue = 0;
+
 export default class TimerProgress extends React.Component<Props, State> {
+    durationStyle = {
+        animation: 'spinnerClockMinRotate ' + this.props.counterMax + 's linear infinite'
+    };
+
     constructor(props: Props) {
         super(props);
 
-        this.state = {counter: 0};
+        this.state = {counter: this.props.counterMax};
 
         this.tick = this.tick.bind(this);
     }
@@ -23,10 +28,10 @@ export default class TimerProgress extends React.Component<Props, State> {
     }
 
     tick() {
-        if (this.state.counter < this.props.counterMax) {
+        if (this.state.counter > stopCounterValue) {
             setTimeout(
                 () => {
-                    this.setState({counter: this.state.counter + 1});
+                    this.setState({counter: this.state.counter - 1});
                     this.tick();
                 },
                 1000);
@@ -35,13 +40,24 @@ export default class TimerProgress extends React.Component<Props, State> {
 
     render() {
         return (
-            <Progress
-                animated={true}
-                color={this.state.counter <= this.props.counterMax * 3 / 5 ?
-                    'success' : this.state.counter <= this.props.counterMax * 4 / 5 ?
-                        'warning' : 'danger'}
-                value={this.state.counter * 100 / this.props.counterMax}
-            />
+            <div>
+                {
+                    this.state.counter > stopCounterValue &&
+                    <div className="row justify-content-center">
+                        {this.state.counter + 'sec'}
+                    </div>
+                }
+                <div className="row justify-content-center">
+                    {
+                        this.state.counter > stopCounterValue &&
+                        <div className="spinnerClock">
+                            <div className="counter">{this.state.counter + 'sec'}</div>
+                            <div className="spinnerClock__clock"/>
+                            <div className="spinnerClock__hand" style={this.durationStyle}/>
+                        </div>
+                    }
+                </div>
+            </div>
         );
     }
 }

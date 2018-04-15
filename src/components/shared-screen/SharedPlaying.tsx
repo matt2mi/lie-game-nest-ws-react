@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Question, Result, Score } from '../../types';
+import TimerProgress from '../reusables/TimerProgress';
 import Socket = SocketIOClient.Socket;
 
 interface Props {
@@ -105,6 +106,9 @@ export default class SharedPlaying extends React.Component<Props, State> {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="row justify-content-center">
+                    <TimerProgress counterMax={30}/>
                 </div>
             </div>
         );

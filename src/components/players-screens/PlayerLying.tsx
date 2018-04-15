@@ -112,18 +112,19 @@ export default class PlayerLying extends React.Component<Props, State> {
                                     <div className="row justify-content-center">
                                         <button
                                             type="submit"
-                                            className="btn btn-primary"
+                                            className="btn btn-success"
                                             disabled={this.state.isGoodAnswer}
                                         >
                                             Envoyer
                                         </button>
                                     </div>
                                 </form>
-                                <br/>
-                                <TimerProgress counterMax={30}/>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div className="row justify-content-center">
+                    <TimerProgress counterMax={30}/>
                 </div>
             </div>
         );
