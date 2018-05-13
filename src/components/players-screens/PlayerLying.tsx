@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SyntheticEvent } from 'react';
 import { Redirect } from 'react-router';
 import * as io from 'socket.io-client';
 import { Question } from '../../types';
@@ -67,13 +68,14 @@ export default class PlayerLying extends React.Component<Props, State> {
         }
     }
 
-    sendLie(): void {
+    sendLie(event: SyntheticEvent<HTMLButtonElement>): void {
         this.socket.on('goToAnswering', () => this.setState({waiting: false, goToAnswering: true}));
         this.socket.emit('lieAnswered', {
             lieValue: this.state.lieAnswered,
             pseudo: this.props.pseudo
         });
         this.setState({waiting: true});
+        event.preventDefault();
     }
 
     render() {
@@ -91,7 +93,7 @@ export default class PlayerLying extends React.Component<Props, State> {
                                 Invente un mito
                             </div>
                             <div className="card-body">
-                                <form onSubmit={this.sendLie}>
+                                <form>
                                     <div className="row">
                                         <div className="col-12">{this.state.question.text}</div>
                                     </div>
@@ -111,9 +113,9 @@ export default class PlayerLying extends React.Component<Props, State> {
                                     </div>
                                     <div className="row justify-content-center">
                                         <button
-                                            type="submit"
                                             className="btn btn-success"
                                             disabled={this.state.isGoodAnswer}
+                                            onClick={this.sendLie}
                                         >
                                             Envoyer
                                         </button>
